@@ -21,13 +21,13 @@ import gfx.ScaledImageLabel;
 import util.Keyboard;
 
 @SuppressWarnings("serial")
-public class Frame extends JFrame implements Runnable{
+public class Scanner extends JFrame{
 
 	private String ROOM = "";
 	
-	public Frame() {
+	public Scanner() {
 		super("Scanner Utility");
-		read();
+		read(false);
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int xSize = ((int) tk.getScreenSize().getWidth());
 		int ySize = ((int) tk.getScreenSize().getHeight());
@@ -39,10 +39,6 @@ public class Frame extends JFrame implements Runnable{
         this.pack();
         this.setVisible(true);
         this.addKeyListener(new Keyboard());
-	}
-	
-	public void run() {
-		
 	}
 	
 	public void addComponentsToPane(Container p) {
@@ -64,7 +60,7 @@ public class Frame extends JFrame implements Runnable{
 	    c.gridy = 0;
 	    p.add(label, c);
 	    
-		label = new JLabel("<html><center>Welcome to the " + ROOM + "</center></html>",SwingConstants.CENTER);
+		label = new JLabel("<html><center>Welcome to " + ROOM + "</center></html>",SwingConstants.CENTER);
 		Font labelFont = label.getFont();
 		label.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -103,7 +99,7 @@ public class Frame extends JFrame implements Runnable{
 		}
 	}
 
-	private void read() {
+	private void read(boolean config) {
 		try(BufferedReader br = new BufferedReader(new FileReader("/home/aaron/Desktop/settings.cfg"))) {
 		    for(String line; (line = br.readLine()) != null; ) {
 		        if(line.indexOf("room: ") == 0) {
@@ -111,7 +107,12 @@ public class Frame extends JFrame implements Runnable{
 		        }
 		    }
 		} catch (Exception e) {
-			
+			if(!config) {
+				new Setup(this);
+			} else {
+				System.exit(0);
+			}
+			read(true);
 		}
 	}
 }

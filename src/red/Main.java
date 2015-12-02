@@ -1,12 +1,11 @@
 package red;
 
-import windows.Frame;
+import windows.Scanner;
 
 public class Main {
 
 	public static void main(String[] args) {
-		Frame frame = new Frame();
-		frame.run();
+		new Scanner();
 	}
 
 }
