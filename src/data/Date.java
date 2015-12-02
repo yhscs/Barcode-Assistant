@@ -1,4 +1,4 @@
-package red;
+package data;
 
 public class Date {
 	private int year = 0;

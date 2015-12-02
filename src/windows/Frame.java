@@ -1,4 +1,4 @@
-package red;
+package windows;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -16,6 +16,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+
+import gfx.ScaledImageLabel;
+import util.Keyboard;
 
 @SuppressWarnings("serial")
 public class Frame extends JFrame implements Runnable{

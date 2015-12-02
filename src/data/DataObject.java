@@ -1,4 +1,4 @@
-package red;
+package data;
 
 import java.time.LocalDateTime;
 

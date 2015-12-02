@@ -1,4 +1,4 @@
-package red;
+package gfx;
  
 import java.awt.Graphics;
  

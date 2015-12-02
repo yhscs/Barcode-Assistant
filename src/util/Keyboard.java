@@ -1,7 +1,9 @@
-package red;
+package util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import data.DataObject;
 
 public class Keyboard implements KeyListener {
 	String que = "";
