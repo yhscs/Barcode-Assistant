@@ -58,6 +58,7 @@ public class Setup extends JDialog{
 		title = BorderFactory.createTitledBorder("Room name:");
 		text = new JTextField(15);
 		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		text.setName("room");
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(text);
@@ -67,6 +68,7 @@ public class Setup extends JDialog{
 		title = BorderFactory.createTitledBorder("Room password:");
 		text = new JPasswordField(15);
 		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		text.setName("room password");
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(text);
@@ -82,6 +84,7 @@ public class Setup extends JDialog{
 		title = BorderFactory.createTitledBorder("Database Admin password:");
 		text = new JPasswordField(15);
 		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		text.setName("database password");
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(text);
@@ -104,7 +107,7 @@ public class Setup extends JDialog{
 		panel.add(jb);
 		jb.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("The user is creating a database.");
+				System.out.println("The user is creating a database...");
 				writeConfig();
 			}
 		});
@@ -127,6 +130,7 @@ public class Setup extends JDialog{
 		jb.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("The user needs help.");
+				showHelp();
 			}
 		});
 		panel.add(jb);
@@ -135,12 +139,24 @@ public class Setup extends JDialog{
 	}
 	
 	private void writeConfig() {
+		boolean allFieldsOK = true;
 		for(int i = 0; i < fields.size(); i++) {
 			if(fields.get(i).getText().equals("")) {
 				fields.get(i).setBorder(BorderFactory.createLineBorder(new Color(255,0,0)));
+				System.out.println("The user did not type anything in the " + fields.get(i).getName() + " field!");
+				allFieldsOK = false;
 			} else {
 				fields.get(i).setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
 			}
+		}
+		if(allFieldsOK) {
+			String room = "";
+			for (JTextField j : fields) {
+				if(j.getName().equals("room")) {
+					room = j.getText();
+				}
+			}
+			System.out.println("Attempting to create " + room + " room...");
 		}
 	}
 	

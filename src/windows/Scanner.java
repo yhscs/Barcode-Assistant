@@ -60,7 +60,7 @@ public class Scanner extends JFrame{
 	    c.gridy = 0;
 	    p.add(label, c);
 	    
-		label = new JLabel("<html><center>Welcome to " + ROOM + "</center></html>",SwingConstants.CENTER);
+		label = new JLabel("<html><center>" + ROOM + " sign in/out station</center></html>",SwingConstants.CENTER);
 		Font labelFont = label.getFont();
 		label.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
 		c.fill = GridBagConstraints.HORIZONTAL;
