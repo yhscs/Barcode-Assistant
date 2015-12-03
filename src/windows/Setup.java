@@ -16,11 +16,13 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import net.Sender;
 import util.Keyboard;
 
 @SuppressWarnings("serial")
@@ -54,6 +56,7 @@ public class Setup extends JDialog{
 		JTextField text;
 		JButton jb;
 		JCheckBox check;
+		JLabel label;
 		
 		title = BorderFactory.createTitledBorder("Room name:");
 		text = new JTextField(15);
@@ -81,10 +84,10 @@ public class Setup extends JDialog{
 		loginArea.setMinimumSize(new Dimension(this.getWidth(), 140));
 		panel.add(loginArea);
 		
-		title = BorderFactory.createTitledBorder("Database Admin password:");
+		title = BorderFactory.createTitledBorder("Administrator password:");
 		text = new JPasswordField(15);
 		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		text.setName("database password");
+		text.setName("admin password");
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(text);
@@ -93,14 +96,22 @@ public class Setup extends JDialog{
 		panel.add(borderPanel);
 		fields.add(text);
 		
-		check = new JCheckBox("Disable sign outs");
+		check = new JCheckBox("Only log students");
 		check.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(check);
+		label = new JLabel("(Disable student");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(label);
+		label = new JLabel("sign-outs)");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(label);
+		
+		
 		
 		JPanel spacerPanel = new JPanel();
 		panel.add(spacerPanel);
 		
-		jb = new JButton("Create Database");
+		jb = new JButton("Create Room");
 		jb.setAlignmentX(Component.CENTER_ALIGNMENT);
 		jb.setMinimumSize(new Dimension(this.getWidth(), jb.getHeight()));
 		jb.setMaximumSize(new Dimension(this.getWidth(), jb.getHeight()));
@@ -156,7 +167,22 @@ public class Setup extends JDialog{
 					room = j.getText();
 				}
 			}
-			System.out.println("Attempting to create " + room + " room...");
+			
+			String roomPassword = "";
+			for (JTextField j : fields) {
+				if(j.getName().equals("room password")) {
+					room = j.getText();
+				}
+			}
+			
+			String adminPassword = "";
+			for (JTextField j : fields) {
+				if(j.getName().equals("admin password")) {
+					room = j.getText();
+				}
+			}
+			System.out.println("Attempting to create the room " + room + ".");
+			Sender.createDatabase(room, roomPassword, adminPassword);
 		}
 	}
 	
