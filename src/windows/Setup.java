@@ -66,7 +66,7 @@ public class Setup extends JDialog{
 		//region Typable field for the room name. Adds JTextField to fields array list.
 		title = BorderFactory.createTitledBorder("Room name:");
 		roomName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		roomName.setName(Constants.ROOM_INDEX_KEY);
+		roomName.setName(Constants.INDEX_KEY_ROOM);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(roomName);
@@ -76,7 +76,7 @@ public class Setup extends JDialog{
 		//region Typable field for the rooms password as a password field. Also added to JTextField array list
 		title = BorderFactory.createTitledBorder("Room password:");
 		roomPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		roomPassword.setName(Constants.ROOM_PASSWORD_INDEX_KEY);
+		roomPassword.setName(Constants.INDEX_KEY_ROOM_PASSWORD);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(roomPassword);
@@ -94,7 +94,7 @@ public class Setup extends JDialog{
 		//region Typable field for the Administrator's database password.
 		title = BorderFactory.createTitledBorder("Administrator password:");
 		adminPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		adminPassword.setName(Constants.ADMIN_PASSWORD_INDEX_KEY);
+		adminPassword.setName(Constants.INDEX_KEY_ADMIN_PASSWORD);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(adminPassword);

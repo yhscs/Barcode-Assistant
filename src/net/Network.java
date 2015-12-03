@@ -15,9 +15,9 @@ public class Network {
 	public static final int SUCCESS = 0;
 	public static int createDatabase(Component c, String room, char[] roomPassword, char[] adminPassword) {
 		ArrayList<String> keys = new ArrayList<>();
-		keys.add(Constants.ROOM_INDEX_KEY);
-		keys.add(Constants.ROOM_PASSWORD_INDEX_KEY);
-		keys.add(Constants.ADMIN_PASSWORD_INDEX_KEY);
+		keys.add(Constants.INDEX_KEY_ROOM);
+		keys.add(Constants.INDEX_KEY_ROOM_PASSWORD);
+		keys.add(Constants.INDEX_KEY_ADMIN_PASSWORD);
 		
 		ArrayList<String> data = new ArrayList<>();
 		String hash;
@@ -36,11 +36,12 @@ public class Network {
 		hash = Constants.getSHA512Hash(Constants.toBytes(roomPassword));
 		data.add(hash);
 		Arrays.fill(roomPassword, '\u0000'); // clear sensitive data
-		System.out.println(hash);
+		//System.out.println(hash);
 		
 		hash = Constants.getSHA512Hash(Constants.toBytes(adminPassword));
 		data.add(hash);
 		Arrays.fill(adminPassword, '\u0000'); // clear sensitive data
+		//System.out.println(hash);
 		
 		URLConnection con;
 		ArrayList<String> ret = new ArrayList<>();
@@ -61,7 +62,7 @@ public class Network {
 		
 		if(ret.get(0).equals("OK")) {
 			return SUCCESS;
-		} else if(ret.get(0).equals("BAD " + Constants.ADMIN_PASSWORD_INDEX_KEY)){
+		} else if(ret.get(0).equals("BAD " + Constants.INDEX_KEY_ADMIN_PASSWORD)){
 			JOptionPane.showMessageDialog(c,
 				    "The administrator password is incorrect. Contact the person who runs the attendance system.",
 				    "Bad password!",
@@ -73,6 +74,36 @@ public class Network {
 				    "Error!",
 				    JOptionPane.ERROR_MESSAGE);
 			return FAILURE;
+		}
+	}
+	
+	public static String getSaltFromDatabase(String username) throws IOException,Exception /*Descriptive...*/{
+		ArrayList<String> keys = new ArrayList<>();
+		keys.add(Constants.INDEX_KEY_SALT);
+		
+		ArrayList<String> data = new ArrayList<>();
+		data.add(username);
+		
+		URLConnection con;
+		ArrayList<String> ret = new ArrayList<>();
+		try {
+			con = Sender.putData(keys,data);
+			ret = Getter.getData(con);
+		} catch (IOException e) {
+			System.err.println("Could not connect to the automatic attendence system. Please try again later.");
+			throw e;
+		} catch (Exception e) {
+			throw e;
+		}
+		
+		if(ret.get(0).equals("OK")) {
+			if(ret.get(1).equals(username)) {
+				return ret.get(2);
+			} else {
+				throw new IOException("Database didn't like that.");
+			}
+		} else {
+			throw new IOException("Database didn't like that.");
 		}
 	}
 }

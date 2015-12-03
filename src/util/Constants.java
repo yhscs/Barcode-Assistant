@@ -14,9 +14,10 @@ public class Constants {
 	
 	public static final String DATABASE_PHP_URL="http://attendance.yhscs.us/db.php";
 	
-	public static final String ROOM_INDEX_KEY="ROOM";
-	public static final String ROOM_PASSWORD_INDEX_KEY="ROOM_PASSWORD";
-	public static final String ADMIN_PASSWORD_INDEX_KEY="ADMINISTRATOR_PASSWORD";
+	public static final String INDEX_KEY_ROOM="ROOM";
+	public static final String INDEX_KEY_ROOM_PASSWORD="ROOM_PASSWORD";
+	public static final String INDEX_KEY_ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
+	public static final String INDEX_KEY_SALT = "SALTY_MC_SALTER";
 	
 	/**
 	 * Credit http://stackoverflow.com/questions/5513144/converting-char-to-byte
