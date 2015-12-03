@@ -30,7 +30,9 @@ public class Setup extends JDialog{
 	private final JTextField roomName = new JTextField(15);
 	private final JPasswordField roomPassword = new JPasswordField(15);
 	private final JPasswordField adminPassword = new JPasswordField(15);
-	private final JButton createRoom = new JButton("Create Room");
+	private final String createRoomAlt = "Connect to Existing Room";
+	private final String createRoomDef = "Create Room";
+	private final JButton createRoom = new JButton(createRoomDef);
 	private final JButton help = new JButton("Help");
 	private final JButton exit = new JButton("Exit");
 	private final JCheckBox logStudentsOnly = new JCheckBox("Only log students");
@@ -123,7 +125,13 @@ public class Setup extends JDialog{
 		connectToDatabase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(connectToDatabase.isSelected()) {
-					
+					adminPassword.setEnabled(false);
+					adminPassword.setBackground(Color.GRAY);
+					createRoom.setText(createRoomAlt);
+				} else {
+					adminPassword.setEnabled(true);
+					adminPassword.setBackground(Color.WHITE);
+					createRoom.setText(createRoomDef);
 				}
 			}
 		});
@@ -171,10 +179,23 @@ public class Setup extends JDialog{
 	}
 	
 	private void writeConfig() {
-		boolean allFieldsOK = getTyped(roomName) && getTyped(roomPassword) && getTyped(adminPassword);
-		if(allFieldsOK) {
-			System.out.println("Attempting to create the room " + roomName.getText() + ".");
-			Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminPassword.getPassword());
+		if(!connectToDatabase.isSelected()) {
+			boolean field1 = getTyped(roomName);
+			boolean field2 = getTyped(roomPassword);
+			boolean field3 = getTyped(adminPassword);
+			boolean allFieldsOK = field1 && field2 && field3;
+			if(allFieldsOK) {
+				System.out.println("Attempting to create the room " + roomName.getText() + ".");
+				Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminPassword.getPassword());
+			}
+		} else {
+			boolean field1 = getTyped(roomName);
+			boolean field2 = getTyped(roomPassword);
+			boolean allFieldsOK = field1 && field2;
+			if(allFieldsOK) {
+				System.out.println("Attempting to connect to existing room " + roomName.getText() + ".");
+				//Network.connectDatabase(this, roomName.getText(), roomPassword.getPassword(), adminPassword.getPassword());
+			}
 		}
 	}
 	
