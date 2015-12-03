@@ -8,7 +8,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,12 +27,18 @@ import util.Keyboard;
 
 @SuppressWarnings("serial")
 public class Setup extends JDialog{
-	
-	private ArrayList<JTextField> fields = new ArrayList<>();
+	private final JTextField roomName = new JTextField(15);
+	private final JPasswordField roomPassword = new JPasswordField(15);
+	private final JPasswordField adminPassword = new JPasswordField(15);
+	private final JButton createRoom = new JButton("Create Room");
+	private final JButton help = new JButton("Help");
+	private final JButton exit = new JButton("Exit");
+	private final JCheckBox logStudentsOnly = new JCheckBox("Only log students");
+	private final JCheckBox connectToDatabase = new JCheckBox("Connect to existing room");
 	
 	public Setup(JFrame frame) {
 		super(frame, "First time setup...", Dialog.ModalityType.APPLICATION_MODAL);
-		this.setPreferredSize(new Dimension(220,360));
+		this.setPreferredSize(new Dimension(220,400));
 		this.setSize(new Dimension(220,480));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addComponentsToPane(this.getContentPane());
@@ -55,34 +60,27 @@ public class Setup extends JDialog{
 		//region Variables used
 		TitledBorder title;
 		JPanel borderPanel;
-		JTextField text;
-		JButton jb;
-		JCheckBox check;
 		JLabel label;
 		//endregion
 		
 		//region Typable field for the room name. Adds JTextField to fields array list.
 		title = BorderFactory.createTitledBorder("Room name:");
-		text = new JTextField(15);
-		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		text.setName(Constants.ROOM_INDEX_KEY);
+		roomName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		roomName.setName(Constants.ROOM_INDEX_KEY);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
-		borderPanel.add(text);
+		borderPanel.add(roomName);
 		loginArea.add(borderPanel);
-		fields.add(text);
 		//endregion
 		
 		//region Typable field for the rooms password as a password field. Also added to JTextField array list
 		title = BorderFactory.createTitledBorder("Room password:");
-		text = new JPasswordField(15);
-		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		text.setName(Constants.ROOM_PASSWORD_INDEX_KEY);
+		roomPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		roomPassword.setName(Constants.ROOM_PASSWORD_INDEX_KEY);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
-		borderPanel.add(text);
+		borderPanel.add(roomPassword);
 		loginArea.add(borderPanel);
-		fields.add(text);
 		//endregion
 		
 		//region Creates a border around the login area and sets min/max height
@@ -95,103 +93,99 @@ public class Setup extends JDialog{
 		
 		//region Typable field for the Administrator's database password.
 		title = BorderFactory.createTitledBorder("Administrator password:");
-		text = new JPasswordField(15);
-		text.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		text.setName(Constants.ADMIN_PASSWORD_INDEX_KEY);
+		adminPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		adminPassword.setName(Constants.ADMIN_PASSWORD_INDEX_KEY);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
-		borderPanel.add(text);
+		borderPanel.add(adminPassword);
 		borderPanel.setMaximumSize(new Dimension(this.getWidth(), 60));
 		borderPanel.setMinimumSize(new Dimension(this.getWidth(), 60));
 		panel.add(borderPanel);
-		fields.add(text);
 		//endregion
 		
 		//region Various other information
-		check = new JCheckBox("Only log students");
-		check.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(check);
-		label = new JLabel("(Disable student");
+
+		logStudentsOnly.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(logStudentsOnly);
+		label = new JLabel("(Disable student sign-outs)");
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(label);
-		label = new JLabel("sign-outs)");
+		//endregion
+		
+		//region Various other information
+		connectToDatabase.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(connectToDatabase);
+		label = new JLabel("(Use this program as another ");
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(label);
+		label = new JLabel("place to check in students)");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		connectToDatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(connectToDatabase.isSelected()) {
+					
+				}
+			}
+		});
 		panel.add(label);
 		//endregion
 		
 		JPanel spacerPanel = new JPanel();
 		panel.add(spacerPanel);
 		
-		jb = new JButton("Create Room");
-		jb.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jb.setMinimumSize(new Dimension(this.getWidth(), jb.getHeight()));
-		jb.setMaximumSize(new Dimension(this.getWidth(), jb.getHeight()));
-		panel.add(jb);
-		jb.addActionListener(new ActionListener(){
+		createRoom.setAlignmentX(Component.CENTER_ALIGNMENT);
+		createRoom.setMinimumSize(new Dimension(this.getWidth(), createRoom.getHeight()));
+		createRoom.setMaximumSize(new Dimension(this.getWidth(), createRoom.getHeight()));
+		createRoom.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("The user is creating a database...");
 				writeConfig();
 			}
 		});
-		jb = new JButton("Exit");
-		jb.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jb.setMinimumSize(new Dimension(this.getWidth(), jb.getHeight()));
-		jb.setMaximumSize(new Dimension(this.getWidth(), jb.getHeight()));
-		panel.add(jb);
-		jb.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("The user quit the setup.");
-				System.exit(0);
-			}
-		});
-		panel.add(jb);
-		jb = new JButton("Help");
-		jb.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jb.setMinimumSize(new Dimension(this.getWidth(), jb.getHeight()));
-		jb.setMaximumSize(new Dimension(this.getWidth(), jb.getHeight()));
-		jb.addActionListener(new ActionListener(){
+		panel.add(createRoom);
+		
+		help.setAlignmentX(Component.CENTER_ALIGNMENT);
+		help.setMinimumSize(new Dimension(this.getWidth(), help.getHeight()));
+		help.setMaximumSize(new Dimension(this.getWidth(), help.getHeight()));
+		help.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("The user needs help.");
 				showHelp();
 			}
 		});
-		panel.add(jb);
+		panel.add(help);
+		
+		exit.setAlignmentX(Component.CENTER_ALIGNMENT);
+		exit.setMinimumSize(new Dimension(this.getWidth(), exit.getHeight()));
+		exit.setMaximumSize(new Dimension(this.getWidth(), exit.getHeight()));
+		exit.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("The user quit the setup.");
+				System.exit(0);
+			}
+		});
+		panel.add(exit);
+
 
 		p.add(panel, BorderLayout.CENTER);
 	}
 	
 	private void writeConfig() {
-		boolean allFieldsOK = true;
-		for(int i = 0; i < fields.size(); i++) {
-			if(fields.get(i).getText().equals("")) {
-				fields.get(i).setBorder(BorderFactory.createLineBorder(new Color(255,0,0)));
-				System.out.println("The user did not type anything in the " + fields.get(i).getName().toLowerCase().replace("_", " ") + " field!");
-				allFieldsOK = false;
-			} else {
-				fields.get(i).setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-			}
-		}
+		boolean allFieldsOK = getTyped(roomName) && getTyped(roomPassword) && getTyped(adminPassword);
 		if(allFieldsOK) {
-			String room = "";
-			for (JTextField j : fields) {
-				if(j.getName().equals(Constants.ROOM_INDEX_KEY)) {
-					room = j.getText();
-				}
-			}
-			String roomPassword = "";
-			for (JTextField j : fields) {
-				if(j.getName().equals(Constants.ROOM_PASSWORD_INDEX_KEY)) {
-					room = j.getText();
-				}
-			}
-			String adminPassword = "";
-			for (JTextField j : fields) {
-				if(j.getName().equals(Constants.ADMIN_PASSWORD_INDEX_KEY)) {
-					room = j.getText();
-				}
-			}
-			System.out.println("Attempting to create the room " + room + ".");
-			Network.createDatabase(room, roomPassword, adminPassword);
+			System.out.println("Attempting to create the room " + roomName.getText() + ".");
+			Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminPassword.getPassword());
+		}
+	}
+	
+	private boolean getTyped(JTextField j) {
+		if(j.getText().equals("")) {
+			j.setBorder(BorderFactory.createLineBorder(new Color(255,0,0)));
+			System.out.println("The user did not type anything in the " + j.getName().toLowerCase().replace("_", " ") + " field!");
+			return false;
+		} else {
+			j.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+			return true;
 		}
 	}
 	
