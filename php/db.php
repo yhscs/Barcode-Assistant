@@ -29,12 +29,16 @@ if (!empty($_POST)) {
 				echo "CREATE";
 				break;
 			case Constants::REQUEST_SALT;
-				echo "OK" . "\n";
-				$stmt = $conn->prepare("SELECT USERNAME, SALT FROM USERS WHERE USERNAME = :name");
+				$stmt = $conn->prepare("SELECT USERNAME, SALT FROM USERS WHERE USERNAME = :name LIMIT 1");
 				$stmt->execute(array('name' => $_POST[Constants::INDEX_KEY_ADMIN]));
 				$row = $stmt->fetch();
-				echo $_POST[Constants::INDEX_KEY_ADMIN] . "\n";
-				echo $row['SALT'] . "\n";
+				if($row) {
+					echo "OK" . "\n";
+					echo $_POST[Constants::INDEX_KEY_ADMIN] . "\n";
+					echo $row['SALT'] . "\n";
+				} else {
+					echo "The username or password is incorrect!";
+				}
 				break;
 			case null;
 				echo "...";

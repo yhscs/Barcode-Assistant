@@ -42,12 +42,17 @@ public class Network {
 		try {
 			userSalt = Constants.getSalt();
 		} catch (NoSuchAlgorithmException e1) {
+			throwError(c,e1,true);
 			return FAILURE;
 		}
 		String adminSalt = "";
 		try {
 			adminSalt = Getter.getSaltFromDatabase(true, admin);
+		} catch (IOException e) {
+			throwError(c,e,false);
+			return FAILURE;
 		} catch (Exception e1) {
+			throwError(c,e1,false);
 			return FAILURE;
 		}
 		
@@ -66,25 +71,27 @@ public class Network {
 			con = Sender.putData(keys,data);
 			ret = Getter.getData(con);
 		} catch (IOException e) {
-			System.err.println(e);
-			JOptionPane.showMessageDialog(c,
-				    "Could not connect to the automatic attendence system. Please try again later.",
-				    "Error!",
-				    JOptionPane.ERROR_MESSAGE);
+			throwError(c,e,false);
 			return FAILURE;
 		} catch (Exception e) {
-			System.err.println(e);
+			throwError(c,e,false);
 			return FAILURE;
 		}
-		
-		if(ret.get(0).equals("OK")) {
-			return SUCCESS;
+		System.out.println(ret.get(0));
+		return FAILURE; //We can never win...
+	}
+	
+	private static void throwError(Component c, Exception e, boolean internal) {
+		if(internal) {
+			JOptionPane.showMessageDialog(c,
+				"Internal error: " + e.getMessage() + "\n" + "Detailed error: " + e.toString() + "\nCheck your spelling or try again later.",
+				"Error!",
+				 JOptionPane.ERROR_MESSAGE);
 		} else {
 			JOptionPane.showMessageDialog(c,
-				    "A system error occured. Sorry!",
-				    "Error!",
-				    JOptionPane.ERROR_MESSAGE);
-			return FAILURE;
+			    "Server error: " + e.getMessage() + "\n" + "Detailed error: " + e.toString() + "\nTry again later. If the issue persists, contact the attendance system administrator.",
+			    "Error!",
+			    JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

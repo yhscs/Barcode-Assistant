@@ -20,12 +20,11 @@ public class Getter {
 		    }
 		    rd.close();
 		} catch (IOException e) {
-			System.err.println("IO Exception! Failed to read from server!");
 			throw e;
 		}
-		for(String str : result) {
+/*		for(String str : result) {
 			System.out.println("GOT: " + str);
-		}
+		}*/
 		return result;
 	}
 
@@ -56,10 +55,8 @@ public class Getter {
 			con = Sender.putData(keys,data);
 			ret = Getter.getData(con);
 		} catch (IOException e) {
-			System.err.println("Could not connect to the automatic attendence system. Please try again later.");
 			throw e;
 		} catch (Exception e) {
-			System.err.println(e);
 			throw e;
 		}
 		
@@ -70,7 +67,7 @@ public class Getter {
 				throw new IOException("Database didn't like that.");
 			}
 		} else {
-			throw new IOException("Database didn't like that.");
+			throw new IOException(ret.get(0));
 		}
 	}
 }
