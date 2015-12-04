@@ -21,9 +21,9 @@ public class Constants {
 	public static final String INDEX_KEY_ROOM_SALT="ROOM_SALT";
 	public static final String INDEX_KEY_ADMIN="ADMIN";
 	public static final String INDEX_KEY_ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
-	public static final String INDEX_KEY_SALT = "SALTY_MC_SALTER";
 	
 	public static final String REQUEST_CREATE="CREATE_ROOM";
+	public static final String REQUEST_SALT="SALTY_MC_SALTER";
 	
 	/**
 	 * Credit http://stackoverflow.com/questions/5513144/converting-char-to-byte
@@ -73,6 +73,17 @@ public class Constants {
 		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
 		byte[] salt = new byte[16];
 		sr.nextBytes(salt);
-		return salt.toString();
+		return bytesToHex(salt);
+	}
+	
+	final protected static char[] hexArray = "0123456789abcdef".toCharArray();
+	public static String bytesToHex(byte[] bytes) {
+	    char[] hexChars = new char[bytes.length * 2];
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        int v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+	    }
+	    return new String(hexChars);
 	}
 }
