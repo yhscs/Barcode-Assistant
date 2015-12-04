@@ -21,6 +21,9 @@ public class Getter {
 			System.err.println("IO Exception! Failed to read from server!");
 			throw e;
 		}
+		for(String str : result) {
+			System.out.println("GOT: " + str);
+		}
 		return result;
 	}
 

@@ -29,19 +29,18 @@ import util.Keyboard;
 public class Setup extends JDialog{
 	private final JTextField roomName = new JTextField(15);
 	private final JPasswordField roomPassword = new JPasswordField(15);
+	private final JTextField adminName = new JTextField(15);
 	private final JPasswordField adminPassword = new JPasswordField(15);
 	private final String createRoomAlt = "Connect to Existing Room";
 	private final String createRoomDef = "Create Room";
 	private final JButton createRoom = new JButton(createRoomDef);
-	private final JButton help = new JButton("Help");
 	private final JButton exit = new JButton("Exit");
-	private final JCheckBox logStudentsOnly = new JCheckBox("Only log students");
 	private final JCheckBox connectToDatabase = new JCheckBox("Connect to existing room");
 	
 	public Setup(JFrame frame) {
-		super(frame, "First time setup...", Dialog.ModalityType.APPLICATION_MODAL);
-		this.setPreferredSize(new Dimension(220,400));
-		this.setSize(new Dimension(220,480));
+		super(frame, "Log in", Dialog.ModalityType.APPLICATION_MODAL);
+		this.setPreferredSize(new Dimension(220,460));
+		this.setSize(new Dimension(220,460));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addComponentsToPane(this.getContentPane());
         this.pack();
@@ -56,8 +55,11 @@ public class Setup extends JDialog{
 		BoxLayout panelLayout = new BoxLayout(panel,BoxLayout.Y_AXIS);
 		final JPanel loginArea = new JPanel();
 		BoxLayout loginAreaLayout = new BoxLayout(loginArea,BoxLayout.Y_AXIS);
+		final JPanel adminArea = new JPanel();
+		BoxLayout adminAreaLayout = new BoxLayout(adminArea,BoxLayout.Y_AXIS);
 		panel.setLayout(panelLayout);
 		loginArea.setLayout(loginAreaLayout);
+		adminArea.setLayout(adminAreaLayout);
 		
 		//region Variables used
 		TitledBorder title;
@@ -93,49 +95,54 @@ public class Setup extends JDialog{
 		panel.add(loginArea);
 		//endregion
 		
-		//region Typable field for the Administrator's database password.
-		title = BorderFactory.createTitledBorder("Administrator password:");
+		//region Connect to existing database region.
+		connectToDatabase.setAlignmentX(Component.CENTER_ALIGNMENT);
+		connectToDatabase.setOpaque(false);
+		connectToDatabase.setSelected(true);
+		toggleConnectToDatabase();
+		panel.add(connectToDatabase);
+		label = new JLabel("(Log in to an existing room. This");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(label);
+		label = new JLabel("can also be used to set up");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(label);
+		label = new JLabel("another checkin area.)");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(label);
+		connectToDatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				toggleConnectToDatabase();
+			}
+		});
+		//endregion
+		
+		//region Typable field for the Administrator's database user name.
+		title = BorderFactory.createTitledBorder("Username:");
+		adminName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		adminName.setName(Constants.INDEX_KEY_ADMIN);
+		borderPanel = new JPanel();
+		borderPanel.setBorder(title);
+		borderPanel.add(adminName);
+		adminArea.add(borderPanel);
+		//endregion
+		
+		//region Typable password field for the Administrator's database password.
+		title = BorderFactory.createTitledBorder("Password:");
 		adminPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
 		adminPassword.setName(Constants.INDEX_KEY_ADMIN_PASSWORD);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(adminPassword);
-		borderPanel.setMaximumSize(new Dimension(this.getWidth(), 60));
-		borderPanel.setMinimumSize(new Dimension(this.getWidth(), 60));
-		panel.add(borderPanel);
+		adminArea.add(borderPanel);
 		//endregion
 		
-		//region Various other information
-
-		logStudentsOnly.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(logStudentsOnly);
-		label = new JLabel("(Disable student sign-outs)");
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(label);
-		//endregion
-		
-		//region Various other information
-		connectToDatabase.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(connectToDatabase);
-		label = new JLabel("(Use this program as another ");
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(label);
-		label = new JLabel("place to check in students)");
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		connectToDatabase.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(connectToDatabase.isSelected()) {
-					adminPassword.setEnabled(false);
-					adminPassword.setBackground(Color.GRAY);
-					createRoom.setText(createRoomAlt);
-				} else {
-					adminPassword.setEnabled(true);
-					adminPassword.setBackground(Color.WHITE);
-					createRoom.setText(createRoomDef);
-				}
-			}
-		});
-		panel.add(label);
+		//region Creates a border around the login area and sets min/max height
+		title = BorderFactory.createTitledBorder("Administrator information:");
+		adminArea.setBorder(title);
+		adminArea.setMaximumSize(new Dimension(this.getWidth(), 140));
+		adminArea.setMinimumSize(new Dimension(this.getWidth(), 140));
+		panel.add(adminArea);
 		//endregion
 		
 		JPanel spacerPanel = new JPanel();
@@ -151,17 +158,6 @@ public class Setup extends JDialog{
 			}
 		});
 		panel.add(createRoom);
-		
-		help.setAlignmentX(Component.CENTER_ALIGNMENT);
-		help.setMinimumSize(new Dimension(this.getWidth(), help.getHeight()));
-		help.setMaximumSize(new Dimension(this.getWidth(), help.getHeight()));
-		help.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("The user needs help.");
-				showHelp();
-			}
-		});
-		panel.add(help);
 		
 		exit.setAlignmentX(Component.CENTER_ALIGNMENT);
 		exit.setMinimumSize(new Dimension(this.getWidth(), exit.getHeight()));
@@ -182,11 +178,12 @@ public class Setup extends JDialog{
 		if(!connectToDatabase.isSelected()) {
 			boolean field1 = getTyped(roomName);
 			boolean field2 = getTyped(roomPassword);
-			boolean field3 = getTyped(adminPassword);
-			boolean allFieldsOK = field1 && field2 && field3;
+			boolean field3 = getTyped(adminName);
+			boolean field4 = getTyped(adminPassword);
+			boolean allFieldsOK = field1 && field2 && field3 && field4;
 			if(allFieldsOK) {
 				System.out.println("Attempting to create the room " + roomName.getText() + ".");
-				Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminPassword.getPassword());
+				Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminName.getText(), adminPassword.getPassword());
 			}
 		} else {
 			boolean field1 = getTyped(roomName);
@@ -210,7 +207,23 @@ public class Setup extends JDialog{
 		}
 	}
 	
-	private void showHelp() {
-		
+	private void toggleConnectToDatabase() {
+		if(connectToDatabase.isSelected()) {
+			adminPassword.setEnabled(false);
+			adminPassword.setBackground(Color.GRAY);
+			adminPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+			adminName.setEnabled(false);
+			adminName.setBackground(Color.GRAY);
+			adminName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+			roomPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+			roomName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+			createRoom.setText(createRoomAlt);
+		} else {
+			adminPassword.setEnabled(true);
+			adminPassword.setBackground(Color.WHITE);
+			adminName.setEnabled(true);
+			adminName.setBackground(Color.WHITE);
+			createRoom.setText(createRoomDef);
+		}
 	}
 }

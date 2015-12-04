@@ -17,27 +17,24 @@ public class Sender {
 			throw new IllegalArgumentException("The size of the keys and data do not match!");
 		}
 		String http = "";
-		boolean firstKeyPair = true;
-		for(String key : keys) {
-			for(String datum : data) {
-				if(firstKeyPair) {
-					try {
-						http += URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(datum, "UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						System.err.println("The encoder failed to create sendable data!");
-						throw e;
-					}
-					firstKeyPair = false;
-				} else {
-					try {
-						http += "&" + URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(datum, "UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						System.err.println("The encoder failed to create sendable data!");
-						throw e;
-					}
+		for(int i = 0; i < keys.size(); i++) {
+			if(i == 0) {
+				try {
+					http += URLEncoder.encode(keys.get(i), "UTF-8") + "=" + URLEncoder.encode(data.get(i), "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					System.err.println("The encoder failed to create sendable data!");
+					throw e;
+				}
+			} else {
+				try {
+					http += "&" + URLEncoder.encode(keys.get(i), "UTF-8") + "=" + URLEncoder.encode(data.get(i), "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					System.err.println("The encoder failed to create sendable data!");
+					throw e;
 				}
 			}
 		}
+		System.out.println("SENT: " + http);
 	    URL url;
 		try {
 			url = new URL(Constants.DATABASE_PHP_URL);

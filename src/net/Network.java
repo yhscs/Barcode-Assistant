@@ -3,6 +3,7 @@ package net;
 import java.awt.Component;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,14 +14,18 @@ import util.Constants;
 public class Network {
 	public static final int FAILURE = -1;
 	public static final int SUCCESS = 0;
-	public static int createDatabase(Component c, String room, char[] roomPassword, char[] adminPassword) {
+	public static int createDatabase(Component c, String room, char[] roomPassword, String admin, char[] adminPassword) {
 		ArrayList<String> keys = new ArrayList<>();
+		keys.add(Constants.INDEX_KEY_REQUEST);
 		keys.add(Constants.INDEX_KEY_ROOM);
 		keys.add(Constants.INDEX_KEY_ROOM_PASSWORD);
+		keys.add(Constants.INDEX_KEY_ROOM_SALT);
+		keys.add(Constants.INDEX_KEY_ADMIN);
 		keys.add(Constants.INDEX_KEY_ADMIN_PASSWORD);
 		
 		ArrayList<String> data = new ArrayList<>();
 		String hash;
+		data.add(Constants.REQUEST_CREATE);
 		data.add(room);
 		
 		/*Alright, story time. So the method for getting passwords as Strings from the JPasswordField is deprecated
@@ -33,15 +38,23 @@ public class Network {
 		clearly defeats the purpose of char[] passwords but it cannot be solved as the password needs to be sent over
 		the Internet as a string.*/
 		
-		hash = Constants.getSHA512Hash(Constants.toBytes(roomPassword));
+		String createSalt;
+		try {
+			createSalt = Constants.getSalt();
+		} catch (NoSuchAlgorithmException e1) {
+			return FAILURE;
+		}
+		
+		hash = Constants.getSHA512Hash(Constants.toBytes(roomPassword), createSalt);
 		data.add(hash);
 		Arrays.fill(roomPassword, '\u0000'); // clear sensitive data
-		//System.out.println(hash);
+		data.add(createSalt);
 		
-		hash = Constants.getSHA512Hash(Constants.toBytes(adminPassword));
+		data.add(admin);
+		
+		hash = Constants.getSHA512Hash(Constants.toBytes(adminPassword), createSalt);
 		data.add(hash);
 		Arrays.fill(adminPassword, '\u0000'); // clear sensitive data
-		//System.out.println(hash);
 		
 		URLConnection con;
 		ArrayList<String> ret = new ArrayList<>();

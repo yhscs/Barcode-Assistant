@@ -5,6 +5,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 public class Constants {
@@ -14,10 +15,15 @@ public class Constants {
 	
 	public static final String DATABASE_PHP_URL="http://attendance.yhscs.us/db.php";
 	
+	public static final String INDEX_KEY_REQUEST="REQUEST";
 	public static final String INDEX_KEY_ROOM="ROOM";
 	public static final String INDEX_KEY_ROOM_PASSWORD="ROOM_PASSWORD";
+	public static final String INDEX_KEY_ROOM_SALT="ROOM_SALT";
+	public static final String INDEX_KEY_ADMIN="ADMIN";
 	public static final String INDEX_KEY_ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
 	public static final String INDEX_KEY_SALT = "SALTY_MC_SALTER";
+	
+	public static final String REQUEST_CREATE="CREATE_ROOM";
 	
 	/**
 	 * Credit http://stackoverflow.com/questions/5513144/converting-char-to-byte
@@ -37,13 +43,15 @@ public class Constants {
 	/**
 	 * Credit http://howtodoinjava.com/2013/07/22/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
 	 * @param passwordToHash
+	 * @param salt Salt from getSalt()
 	 * @return a hashed string in sha512
 	 */
-	public static String getSHA512Hash(byte[] passwordToHash)
+	public static String getSHA512Hash(byte[] passwordToHash, String salt)
 	{
 		String generatedPassword = null;
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-512");
+			md.update(salt.getBytes());
 			byte[] bytes = md.digest(passwordToHash);
 			StringBuilder sb = new StringBuilder();
 			for(int i=0; i< bytes.length ;i++)
@@ -58,5 +66,13 @@ public class Constants {
 			System.err.println(e);
 		}
 		return generatedPassword;
+	}
+	
+	public static String getSalt() throws NoSuchAlgorithmException
+	{
+		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+		byte[] salt = new byte[16];
+		sr.nextBytes(salt);
+		return salt.toString();
 	}
 }
