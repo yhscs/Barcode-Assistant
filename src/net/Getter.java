@@ -22,9 +22,11 @@ public class Getter {
 		} catch (IOException e) {
 			throw e;
 		}
-/*		for(String str : result) {
-			System.out.println("GOT: " + str);
-		}*/
+		if(result.get(0).equals("<br />")) {
+			for(String str : result) {
+				System.out.println("GOT: " + str);
+			}
+		}
 		return result;
 	}
 
@@ -36,14 +38,10 @@ public class Getter {
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public static String getSaltFromDatabase(boolean admin, String username) throws IOException,Exception /*Descriptive...*/{
+	public static String getSaltFromDatabase(String username) throws IOException,Exception /*Descriptive...*/{
 		ArrayList<String> keys = new ArrayList<>();
 		keys.add(Constants.INDEX_KEY_REQUEST);
-		if(admin) {
-			keys.add(Constants.INDEX_KEY_ADMIN);
-		} else {
-			keys.add(Constants.INDEX_KEY_ROOM);
-		}
+		keys.add(Constants.INDEX_KEY_USER);
 		
 		ArrayList<String> data = new ArrayList<>();
 		data.add(Constants.REQUEST_SALT);

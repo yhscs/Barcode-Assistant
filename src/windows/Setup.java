@@ -8,6 +8,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -16,6 +17,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -27,20 +29,24 @@ import util.Keyboard;
 
 @SuppressWarnings("serial")
 public class Setup extends JDialog{
-	private final JTextField roomName = new JTextField(15);
-	private final JPasswordField roomPassword = new JPasswordField(15);
-	private final JTextField adminName = new JTextField(15);
-	private final JPasswordField adminPassword = new JPasswordField(15);
+	private final JTextField roomName = new JTextField(20);
+	private final JPasswordField roomPassword = new JPasswordField(20);
+	private final JTextField adminName = new JTextField(20);
+	private final JPasswordField adminPassword = new JPasswordField(20);
 	private final String createRoomAlt = "Connect to Existing Room";
 	private final String createRoomDef = "Create Room";
 	private final JButton createRoom = new JButton(createRoomDef);
 	private final JButton exit = new JButton("Exit");
 	private final JCheckBox connectToDatabase = new JCheckBox("Connect to existing room");
 	
-	public Setup(JFrame frame) {
-		super(frame, "Log in", Dialog.ModalityType.APPLICATION_MODAL);
-		this.setPreferredSize(new Dimension(220,460));
-		this.setSize(new Dimension(220,460));
+	private String roomNameString;
+	private String roomHash;
+	private boolean hasReturned = false;
+	
+	public Setup() {
+		super(null, "Log in", Dialog.ModalityType.APPLICATION_MODAL);
+		this.setPreferredSize(new Dimension(260,460));
+		this.setSize(new Dimension(260,460));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addComponentsToPane(this.getContentPane());
         this.pack();
@@ -154,7 +160,7 @@ public class Setup extends JDialog{
 		createRoom.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("The user is creating a database...");
-				writeConfig();
+				accept();
 			}
 		});
 		panel.add(createRoom);
@@ -174,7 +180,7 @@ public class Setup extends JDialog{
 		p.add(panel, BorderLayout.CENTER);
 	}
 	
-	private void writeConfig() {
+	private void accept() {
 		if(!connectToDatabase.isSelected()) {
 			boolean field1 = getTyped(roomName);
 			boolean field2 = getTyped(roomPassword);
@@ -183,7 +189,16 @@ public class Setup extends JDialog{
 			boolean allFieldsOK = field1 && field2 && field3 && field4;
 			if(allFieldsOK) {
 				System.out.println("Attempting to create the room " + roomName.getText() + ".");
-				Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminName.getText(), adminPassword.getPassword());
+				if(Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminName.getText(), adminPassword.getPassword()) == Network.SUCCESS) {
+					JOptionPane.showMessageDialog(this,
+						    "Created the room succesfully! You can now use the new account to log into the attendance system.",
+						    "Success!",
+						    JOptionPane.INFORMATION_MESSAGE);
+					adminName.setText("");
+					adminPassword.setText("");
+					connectToDatabase.setSelected(true);
+					toggleConnectToDatabase();
+				}
 			}
 		} else {
 			boolean field1 = getTyped(roomName);
@@ -191,7 +206,12 @@ public class Setup extends JDialog{
 			boolean allFieldsOK = field1 && field2;
 			if(allFieldsOK) {
 				System.out.println("Attempting to connect to existing room " + roomName.getText() + ".");
-				//Network.connectDatabase(this, roomName.getText(), roomPassword.getPassword(), adminPassword.getPassword());
+				if(Network.testLogin(this, roomName.getText(), roomPassword.getPassword(),roomHash) == Network.SUCCESS) {
+					this.roomNameString = roomName.getText();
+					this.hasReturned = true;
+					this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+					this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				}
 			}
 		}
 	}
@@ -225,5 +245,17 @@ public class Setup extends JDialog{
 			adminName.setBackground(Color.WHITE);
 			createRoom.setText(createRoomDef);
 		}
+	}
+
+	public String getRoomName() {
+		return roomNameString;
+	}
+	
+	public String getHash() { 
+		return roomHash;
+	}
+
+	public boolean hasReturned() {
+		return hasReturned;
 	}
 }

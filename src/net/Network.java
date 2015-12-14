@@ -1,7 +1,6 @@
 package net;
 
 import java.awt.Component;
-import java.io.IOException;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import util.Constants;
 public class Network {
 	public static final int FAILURE = -1;
 	public static final int SUCCESS = 0;
+	
 	public static int createDatabase(Component c, String room, char[] roomPassword, String admin, char[] adminPassword) {
 		ArrayList<String> keys = new ArrayList<>();
 		keys.add(Constants.INDEX_KEY_REQUEST);
@@ -47,12 +47,9 @@ public class Network {
 		}
 		String adminSalt = "";
 		try {
-			adminSalt = Getter.getSaltFromDatabase(true, admin);
-		} catch (IOException e) {
+			adminSalt = Getter.getSaltFromDatabase(admin);
+		} catch (Exception e) {
 			throwError(c,e,false);
-			return FAILURE;
-		} catch (Exception e1) {
-			throwError(c,e1,false);
 			return FAILURE;
 		}
 		
@@ -62,6 +59,7 @@ public class Network {
 		data.add(admin);
 		hash = Constants.getSHA512Hash(Constants.toBytes(adminPassword), adminSalt);
 		data.add(hash);
+		System.out.println("HASH: " + hash);
 		Arrays.fill(roomPassword, '\u0000'); // clear sensitive data
 		Arrays.fill(adminPassword, '\u0000'); // clear sensitive data
 		
@@ -70,28 +68,79 @@ public class Network {
 		try {
 			con = Sender.putData(keys,data);
 			ret = Getter.getData(con);
-		} catch (IOException e) {
-			throwError(c,e,false);
-			return FAILURE;
 		} catch (Exception e) {
 			throwError(c,e,false);
 			return FAILURE;
 		}
-		System.out.println(ret.get(0));
-		return FAILURE; //We can never win...
+		return calculateSuccess(c,ret);
 	}
 	
 	private static void throwError(Component c, Exception e, boolean internal) {
 		if(internal) {
 			JOptionPane.showMessageDialog(c,
-				"Internal error: " + e.getMessage() + "\n" + "Detailed error: " + e.toString() + "\nCheck your spelling or try again later.",
+				"Internal error: " + e.toString() + "\nCheck your spelling or try again later.",
 				"Error!",
 				 JOptionPane.ERROR_MESSAGE);
 		} else {
 			JOptionPane.showMessageDialog(c,
-			    "Server error: " + e.getMessage() + "\n" + "Detailed error: " + e.toString() + "\nTry again later. If the issue persists, contact the attendance system administrator.",
+			    "Server error: " + e.toString() + "\nTry again later. If the issue persists, contact the attendance system administrator.",
 			    "Error!",
 			    JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	public static int testLogin(Component c, String room, char[] password, String h) {
+		ArrayList<String> keys = new ArrayList<>();
+		keys.add(Constants.INDEX_KEY_REQUEST);
+		keys.add(Constants.INDEX_KEY_ROOM);
+		keys.add(Constants.INDEX_KEY_ROOM_PASSWORD);
+		
+		ArrayList<String> data = new ArrayList<>();
+		String hash;
+		String userSalt = "";
+		try {
+			userSalt = Getter.getSaltFromDatabase(room);
+		} catch (Exception e) {
+			throwError(c,e,false);
+			return FAILURE;
+		}
+		hash = Constants.getSHA512Hash(Constants.toBytes(password), userSalt);
+		try {
+			h = hash;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Arrays.fill(password, '\u0000'); // clear sensitive data
+		data.add(Constants.REQUEST_LOGIN);
+		data.add(room);
+		data.add(hash);
+		
+		URLConnection con;
+		ArrayList<String> ret = new ArrayList<>();
+		try {
+			con = Sender.putData(keys,data);
+			ret = Getter.getData(con);
+		} catch (Exception e) {
+			throwError(c,e,false);
+			return FAILURE;
+		}
+		
+		return calculateSuccess(c,ret);
+	}
+	
+	private static int calculateSuccess(Component c, ArrayList<String> ret) {
+		if(ret.size() > 0 && ret.get(0).equals("OK")) {
+			return SUCCESS;
+		} else if (ret.size() > 0){
+			throwError(c,new Exception(ret.get(0)), false);
+			for(String s : ret) {
+				System.out.println("Server said: " + s);
+			}
+			return FAILURE; //We can never win...
+		} else {
+			throwError(c,new IndexOutOfBoundsException("The server gave an empty reply!"), false);
+			return FAILURE; //We REALLY can never win...
+		}
+	}
+	
 }

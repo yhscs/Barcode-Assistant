@@ -7,8 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -21,13 +19,15 @@ import gfx.ScaledImageLabel;
 import util.Keyboard;
 
 @SuppressWarnings("serial")
-public class Scanner extends JFrame{
-
-	private String ROOM = "";
+public class Scanner extends JFrame{	
 	
-	public Scanner() {
+	private String roomName;
+	private String hash;
+	
+	public Scanner(String roomName, String hash) {
 		super("Scanner Utility");
-		read(false);
+        this.roomName = roomName;
+        this.hash = hash;
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int xSize = ((int) tk.getScreenSize().getWidth());
 		int ySize = ((int) tk.getScreenSize().getHeight());
@@ -60,7 +60,7 @@ public class Scanner extends JFrame{
 	    c.gridy = 0;
 	    p.add(label, c);
 	    
-		label = new JLabel("<html><center>" + ROOM + " sign in/out station</center></html>",SwingConstants.CENTER);
+		label = new JLabel("<html><center>" + roomName + " sign in/out station</center></html>",SwingConstants.CENTER);
 		Font labelFont = label.getFont();
 		label.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -96,23 +96,6 @@ public class Scanner extends JFrame{
 		    c.gridx = 1;
 		    c.gridy = 2;
 		    p.add(imageLabel, c);
-		}
-	}
-
-	private void read(boolean config) {
-		try(BufferedReader br = new BufferedReader(new FileReader("/home/aaron/Desktop/settings.cfg"))) {
-		    for(String line; (line = br.readLine()) != null; ) {
-		        if(line.indexOf("room: ") == 0) {
-		        	ROOM = line.substring(6);
-		        }
-		    }
-		} catch (Exception e) {
-			if(!config) {
-				new Setup(this);
-			} else {
-				System.exit(0);
-			}
-			read(true);
 		}
 	}
 }
