@@ -59,7 +59,6 @@ public class Network {
 		data.add(admin);
 		hash = Constants.getSHA512Hash(Constants.toBytes(adminPassword), adminSalt);
 		data.add(hash);
-		System.out.println("HASH: " + hash);
 		Arrays.fill(roomPassword, '\u0000'); // clear sensitive data
 		Arrays.fill(adminPassword, '\u0000'); // clear sensitive data
 		

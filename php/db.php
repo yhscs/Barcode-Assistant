@@ -28,6 +28,9 @@ try {
 if (!empty($_POST)) {
     if(array_key_exists(Constants::INDEX_KEY_REQUEST,$_POST)) {
 		switch($_POST[Constants::INDEX_KEY_REQUEST]) {
+			case Constants::REQUEST_SETDATA:
+				
+				break;
 			case Constants::REQUEST_LOGIN:
 				if(!(array_key_exists(Constants::INDEX_KEY_ROOM,$_POST)
 				&& array_key_exists(Constants::INDEX_KEY_ROOM_PASSWORD,$_POST))) {

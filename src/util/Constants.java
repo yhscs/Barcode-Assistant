@@ -14,6 +14,7 @@ public class Constants {
 	}
 	
 	public static final String DATABASE_PHP_URL="http://attendance.yhscs.us/db.php";
+	public static final String CSV_URL="http://attendance.yhscs.us/students.csv";
 	
 	public static final String INDEX_KEY_REQUEST="REQUEST";
 	public static final String INDEX_KEY_ROOM="ROOM";
