@@ -23,9 +23,10 @@ public class Constants {
 	public static final String INDEX_KEY_ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
 	public static final String INDEX_KEY_USER="USER";
 	
-	public static final String REQUEST_LOGIN="LOGIN";
-	public static final String REQUEST_CREATE="CREATE_ROOM";
 	public static final String REQUEST_SALT="SALTY_MC_SALTER";
+	public static final String REQUEST_CREATE="CREATE_ROOM";
+	public static final String REQUEST_LOGIN="LOGIN";
+	public static final String REQUEST_SETDATA = "PLS_CREATE_DATA";
 	
 	/**
 	 * Credit http://stackoverflow.com/questions/5513144/converting-char-to-byte

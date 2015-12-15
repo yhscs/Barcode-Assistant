@@ -12,6 +12,7 @@ class Constants {
 	const REQUEST_SALT = "SALTY_MC_SALTER";
 	const REQUEST_CREATE = "CREATE_ROOM";
 	const REQUEST_LOGIN = "LOGIN";
+	const REQUEST_SETDATA = "PLS_CREATE_DATA";
 }
 
 include '/home/aj4057/config.php'; //Define $servername $username $password $dbname and $configready here.
