@@ -6,7 +6,8 @@ import java.io.InputStreamReader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import util.Constants;
+import util.keys.Index;
+import util.keys.Request;
 
 public class Getter {
 	public static ArrayList<String> getData(URLConnection conn) throws IOException{
@@ -40,11 +41,11 @@ public class Getter {
 	 */
 	public static String getSaltFromDatabase(String username) throws IOException,Exception /*Descriptive...*/{
 		ArrayList<String> keys = new ArrayList<>();
-		keys.add(Constants.INDEX_KEY_REQUEST);
-		keys.add(Constants.INDEX_KEY_USER);
+		keys.add(Index.REQUEST);
+		keys.add(Index.USER);
 		
 		ArrayList<String> data = new ArrayList<>();
-		data.add(Constants.REQUEST_SALT);
+		data.add(Request.SALT);
 		data.add(username);
 		
 		URLConnection con;

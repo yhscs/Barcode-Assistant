@@ -18,7 +18,7 @@ public class Keyboard implements KeyListener {
         		try {
         			Integer.parseInt(que);
             		System.out.println("... Accepted.");
-            		DataObject data = new DataObject(que, "null");
+            		DataObject data = new DataObject(que);
             		System.out.println(data);
         		} catch (NumberFormatException err) {
         			System.out.println("... Declined. Not real numbers.");

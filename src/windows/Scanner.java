@@ -22,6 +22,7 @@ import util.Keyboard;
 public class Scanner extends JFrame{	
 	
 	private String roomName;
+	@SuppressWarnings("unused")
 	private String hash;
 	
 	public Scanner(String roomName, String hash) {
