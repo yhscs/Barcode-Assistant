@@ -35,7 +35,7 @@ try {
 if (!empty($_POST)) {
     if(array_key_exists(Index::REQUEST,$_POST)) {
 		switch($_POST[Index::REQUEST]) {
-			case Constants::REQUEST_SETDATA:
+			case Request::SETDATA:
 				if(!(array_key_exists(Index::ROOM,$_POST)
 				  && array_key_exists(Index::ROOM_PASSWORD,$_POST)
 				  && array_key_exists(StudentData::STUDENT_ID,$_POST)
@@ -47,7 +47,7 @@ if (!empty($_POST)) {
 				echo "NOT_READY_SRS";
 				break;
 			
-			case Constants::REQUEST_LOGIN:
+			case Request::LOGIN:
 				if(!(array_key_exists(Index::ROOM,$_POST)
 				&& array_key_exists(Index::ROOM_PASSWORD,$_POST))) {
 					echo "...";
@@ -68,7 +68,7 @@ if (!empty($_POST)) {
 				echo "OK";
 				break;
 			
-			case Constants::REQUEST_CREATE:
+			case Request::CREATE:
 				if(!(array_key_exists(Index::ROOM,$_POST)
 				  && array_key_exists(Index::ROOM_PASSWORD,$_POST)
 				  && array_key_exists(Index::ROOM_SALT,$_POST)
@@ -77,10 +77,11 @@ if (!empty($_POST)) {
 					echo "...";
 					die();
 				}
+				$userLowercaseCheck = strtolower($_POST[Index::ROOM]);
 				$stmt = $conn->prepare("SELECT USERNAME FROM USERS WHERE USERNAME = :name LIMIT 1"); #Select usernames
 				$stmt->execute(array('name' => $_POST[Index::ROOM])); #based on the room
 				$row = $stmt->fetch();
-				if($row["USERNAME"] === $_POST[Index::ROOM]) { #if the room is in the database
+				if(strtolower($row["USERNAME"]) === $userLowercaseCheck) { #if the room is in the database (both check as a lowercase string)
 					echo "This room name already exists!"; #Deny it.
 					die();
 				}
@@ -104,7 +105,7 @@ if (!empty($_POST)) {
 				echo "User account " . $_POST[Index::ROOM] . " created successfully";
 				break;
 			
-			case Constants::REQUEST_SALT:
+			case Request::SALT:
 				if(!(array_key_exists(Index::USER,$_POST))) {
 					echo "...";
 					die();

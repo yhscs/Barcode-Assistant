@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import util.keys.Index;
+import util.keys.Indexes;
 import util.keys.Request;
 
 public class Getter {
@@ -41,8 +41,8 @@ public class Getter {
 	 */
 	public static String getSaltFromDatabase(String username) throws IOException,Exception /*Descriptive...*/{
 		ArrayList<String> keys = new ArrayList<>();
-		keys.add(Index.REQUEST);
-		keys.add(Index.USER);
+		keys.add(Indexes.REQUEST);
+		keys.add(Indexes.USER);
 		
 		ArrayList<String> data = new ArrayList<>();
 		data.add(Request.SALT);

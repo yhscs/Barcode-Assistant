@@ -27,7 +27,7 @@ public class Scanner extends JFrame{
 	
 	public Scanner(String roomName, String hash) {
 		super("Scanner Utility");
-        this.roomName = roomName;
+        this.roomName = roomName.substring(0, 1).toUpperCase() + roomName.substring(1);
         this.hash = hash;
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int xSize = ((int) tk.getScreenSize().getWidth());

@@ -25,7 +25,7 @@ import javax.swing.border.TitledBorder;
 
 import net.Network;
 import util.Keyboard;
-import util.keys.Index;
+import util.keys.Indexes;
 
 @SuppressWarnings("serial")
 public class Setup extends JDialog{
@@ -76,7 +76,7 @@ public class Setup extends JDialog{
 		//region Typable field for the room name. Adds JTextField to fields array list.
 		title = BorderFactory.createTitledBorder("Room name:");
 		roomName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		roomName.setName(Index.ROOM);
+		roomName.setName(Indexes.ROOM);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(roomName);
@@ -86,7 +86,7 @@ public class Setup extends JDialog{
 		//region Typable field for the rooms password as a password field. Also added to JTextField array list
 		title = BorderFactory.createTitledBorder("Room password:");
 		roomPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		roomPassword.setName(Index.ROOM_PASSWORD);
+		roomPassword.setName(Indexes.ROOM_PASSWORD);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(roomPassword);
@@ -126,7 +126,7 @@ public class Setup extends JDialog{
 		//region Typable field for the Administrator's database user name.
 		title = BorderFactory.createTitledBorder("Username:");
 		adminName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		adminName.setName(Index.ADMIN);
+		adminName.setName(Indexes.ADMIN);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(adminName);
@@ -136,7 +136,7 @@ public class Setup extends JDialog{
 		//region Typable password field for the Administrator's database password.
 		title = BorderFactory.createTitledBorder("Password:");
 		adminPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
-		adminPassword.setName(Index.ADMIN_PASSWORD);
+		adminPassword.setName(Indexes.ADMIN_PASSWORD);
 		borderPanel = new JPanel();
 		borderPanel.setBorder(title);
 		borderPanel.add(adminPassword);

@@ -1,7 +1,7 @@
 package util.keys;
 
-public class Index {
-	private Index() throws InstantiationException{
+public class Indexes {
+	private Indexes() throws InstantiationException{
 		throw new InstantiationException();
 	}
 	public static final String REQUEST="REQUEST";
