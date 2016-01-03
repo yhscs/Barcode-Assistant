@@ -22,13 +22,11 @@ import util.Keyboard;
 public class Scanner extends JFrame{	
 	
 	private String roomName;
-	@SuppressWarnings("unused")
-	private String hash;
-	
+	private JLabel title;
+	private JLabel subtext;
 	public Scanner(String roomName, String hash) {
 		super("Scanner Utility");
         this.roomName = roomName.substring(0, 1).toUpperCase() + roomName.substring(1);
-        this.hash = hash;
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int xSize = ((int) tk.getScreenSize().getWidth());
 		int ySize = ((int) tk.getScreenSize().getHeight());
@@ -39,7 +37,7 @@ public class Scanner extends JFrame{
         addComponentsToPane(this.getContentPane());
         this.pack();
         this.setVisible(true);
-        this.addKeyListener(new Keyboard());
+        this.addKeyListener(new Keyboard(this, roomName, hash));
 	}
 	
 	public void addComponentsToPane(Container p) {
@@ -61,23 +59,23 @@ public class Scanner extends JFrame{
 	    c.gridy = 0;
 	    p.add(label, c);
 	    
-		label = new JLabel("<html><center>" + roomName + " sign in/out station</center></html>",SwingConstants.CENTER);
-		Font labelFont = label.getFont();
-		label.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
+		title = new JLabel("<html><center>" + roomName + " sign in/out station</center></html>",SwingConstants.CENTER);
+		Font labelFont = title.getFont();
+		title.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;
 		c.gridx = 1;
 	    c.gridy = 0;
-	    p.add(label, c);
+	    p.add(title, c);
 	    
-		label = new JLabel("<html><center>Please use the barcode scanner and your Student ID to sign in and out of this room.</center></html>",SwingConstants.CENTER);
-		labelFont = label.getFont();
-		label.setFont(new Font(labelFont.getName(), Font.PLAIN, 40));
+		subtext = new JLabel("<html><center>Please use the barcode scanner and your Student ID to sign in and out of this room.</center></html>",SwingConstants.CENTER);
+		labelFont = subtext.getFont();
+		subtext.setFont(new Font(labelFont.getName(), Font.PLAIN, 40));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;
 		c.gridx = 1;
 	    c.gridy = 1;
-	    p.add(label, c);
+	    p.add(subtext, c);
 	    
 	    BufferedImage image;
 		try {
@@ -98,5 +96,21 @@ public class Scanner extends JFrame{
 		    c.gridy = 2;
 		    p.add(imageLabel, c);
 		}
+	}
+	
+	public String getHeaderText() {
+		return title.getText();
+	}
+	
+	public String getSubtitleText() {
+		return subtext.getText();
+	}
+	
+	public void setHeaderText(String text) {
+		title.setText("<html><center>" + text + "</center></html>");
+	}
+	
+	public void setSubtitleText(String text) {
+		subtext.setText("<html><center>" + text + "</center></html>");
 	}
 }

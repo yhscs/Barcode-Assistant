@@ -9,6 +9,7 @@ import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 import util.Constants;
+import util.keys.HashAndReturn;
 import util.keys.Indexes;
 import util.keys.Request;
 import util.keys.StudentData;
@@ -27,17 +28,18 @@ public class Network {
 	 * @param automatic Boolean that is true if the student is being logged out automatically. 
 	 * @return An int SUCCESS or FAILURE.
 	 */
-	public static int putData(Component c, String room, String roomHash, String id, String time, boolean automatic) {
+	public static int putData(Component c, String room, String roomHash, String id, String time, boolean automatic) throws Exception {
 		//--PREPARE DATA--
 		ArrayList<String> data = new ArrayList<>();		ArrayList<String> keys = new ArrayList<>();
-		keys.add(Indexes.REQUEST);						data.add(Request.CREATE);
+		keys.add(Indexes.REQUEST);						data.add(Request.SETDATA);
 		keys.add(Indexes.ROOM);							data.add(room);
 		keys.add(Indexes.ROOM_PASSWORD);				data.add(roomHash);
 		keys.add(StudentData.ID);						data.add(id);
 		keys.add(StudentData.CHECK_TIME);				data.add(time);
-		keys.add(StudentData.AUTOMATIC);				data.add(Boolean.toString(automatic));
+		keys.add(StudentData.AUTOMATIC);				data.add((automatic ? "1" : "0"));
+		keys.add(StudentData.IS_CHECIN);				data.add("0"); //TODO: This
 		//--THAT IS ALL--
-		return calculateSuccess(c,keys,data); // send data
+		return calculateSuccessThrowable(keys,data); // send data
 	}
 	
 	/**
@@ -92,13 +94,13 @@ public class Network {
 	 * @param h
 	 * @return
 	 */
-	public static int testLogin(Component c, String room, char[] password, String h) {
+	public static HashAndReturn testLogin(Component c, String room, char[] password) {
 		String userSalt = "";
 		try {
 			userSalt = Getter.getSaltFromDatabase(room);
 		} catch (Exception e) {
 			throwError(c,e,false);
-			return FAILURE;
+			return new HashAndReturn(FAILURE, null);
 		}
 		String roomHash = Constants.getSHA512Hash(Constants.toBytes(password), userSalt);
 		
@@ -112,7 +114,7 @@ public class Network {
 		
 		
 		Arrays.fill(password, '\u0000'); // clear sensitive data
-		return calculateSuccess(c,keys,data); //send data
+		return new HashAndReturn(calculateSuccess(c,keys,data), roomHash); //send data
 	}
 	
 	/**
@@ -121,7 +123,7 @@ public class Network {
 	 * @param e
 	 * @param internal
 	 */
-	private static void throwError(Component c, Exception e, boolean internal) {
+	private static void throwError(Component c, Exception e, boolean internal){
 		if(internal) {
 			JOptionPane.showMessageDialog(c,
 				"Internal error: " + e.toString() + "\nCheck your spelling or try again later.",
@@ -155,7 +157,7 @@ public class Network {
 		if(ret.size() > 0 && ret.get(0).equals("OK")) {
 			return SUCCESS;
 		} else if (ret.size() > 0){
-			throwError(c,new Exception(ret.get(0)), false);
+			throwError(c,new Exception((ret.get(0).equals("<br />") ? "There was a PHP error. Get a programmer to fix it." : ret.get(0))), false);
 			for(String s : ret) {
 				System.out.println("Server said: " + s);
 			}
@@ -163,6 +165,24 @@ public class Network {
 		} else {
 			throwError(c,new IndexOutOfBoundsException("The server gave an empty reply!"), false);
 			return FAILURE; //We REALLY can never win...
+		}
+	}
+	
+	private static int calculateSuccessThrowable(ArrayList<String> keys, ArrayList<String> data) throws Exception{
+		URLConnection con;
+		ArrayList<String> ret = new ArrayList<>();
+		con = Sender.putData(keys,data);
+		ret = Getter.getData(con);
+		if(ret.size() > 0 && ret.get(0).equals("OK")) {
+			return SUCCESS;
+		} else if (ret.size() > 0){
+			Exception e = new Exception((ret.get(0).equals("<br />") ? "There was a PHP error. Get a programmer to fix it." : ret.get(0)));
+			for(String s : ret) {
+				System.out.println("Server said: " + s);
+			}
+			throw e;
+		} else {
+			throw new IndexOutOfBoundsException("The server gave an empty reply!");
 		}
 	}
 	

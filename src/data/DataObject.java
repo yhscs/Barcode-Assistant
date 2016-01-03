@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class DataObject {
 	private String id = "";
 	private LocalDateTime info = LocalDateTime.now();
-	private Date date = new Date(info.getYear(), info.getMonthValue(), info.getDayOfMonth(), info.getHour(), info.getMinute(), info.getSecond(), info.getNano());
+	private Date date = new Date(info.getYear(), info.getMonthValue(), info.getDayOfMonth(), info.getHour(), info.getMinute(), info.getSecond());
 	public DataObject(String id) {
 		this.id = id;
 	}

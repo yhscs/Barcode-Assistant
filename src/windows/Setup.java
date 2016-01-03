@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import net.Network;
-import util.Keyboard;
+import util.keys.HashAndReturn;
 import util.keys.Indexes;
 
 @SuppressWarnings("serial")
@@ -53,7 +53,6 @@ public class Setup extends JDialog{
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        this.addKeyListener(new Keyboard());
 	}
 
 	private void addComponentsToPane(Container p) {
@@ -206,8 +205,10 @@ public class Setup extends JDialog{
 			boolean allFieldsOK = field1 && field2;
 			if(allFieldsOK) {
 				System.out.println("Attempting to connect to existing room " + roomName.getText() + ".");
-				if(Network.testLogin(this, roomName.getText(), roomPassword.getPassword(),roomHash) == Network.SUCCESS) {
+				HashAndReturn result = Network.testLogin(this, roomName.getText(), roomPassword.getPassword());
+				if(result.getResult() == Network.SUCCESS) {
 					this.roomNameString = roomName.getText();
+					this.roomHash = result.getHash();
 					this.hasReturned = true;
 					this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 					this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
