@@ -1,4 +1,4 @@
-package util.keys;
+package util;
 
 public class HashAndReturn {
 	int result;

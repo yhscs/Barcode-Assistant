@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import net.Network;
-import util.keys.HashAndReturn;
+import util.HashAndReturn;
 import util.keys.Indexes;
 
 @SuppressWarnings("serial")
