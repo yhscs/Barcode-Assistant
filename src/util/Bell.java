@@ -20,38 +20,38 @@ public class Bell {
 			return "Before school";
 		}
 		BellInside b;
-		if((b = isBetween(1,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(1,7,25,8,17,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(2,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(2,8,17,9,9,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(3,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(3,9,9,10,1,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(4,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(4,10,1,10,35,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(5,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(5,10,35,11,3,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(6,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(6,11,3,11,31,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(7,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(7,11,31,11,39,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(8,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(8,11,59,12,27,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(9,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(9,12,27,12,56,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(10,7,25,8,12,hour,minute)).isBetween) {
+		if((b = isBetween(10,12,56,13,48,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(11,7,25,8,12,hour,minute)).isBetween) {
-			return b.response;
+		if(isBetween(13,48,14,35,hour,minute)) {
+			return "11";
 		}
 		return "After school";
 	}
@@ -71,7 +71,7 @@ public class Bell {
 		int hourandminute2 = hour2 * 60 + minute2;
 		int actualhourandminute = actualhour * 60 + actualminute;
 		if(actualhourandminute >= hourandminute1 && actualhourandminute < hourandminute2) {
-			if(actualhourandminute <= hourandminute2 - 5){
+			if(actualhourandminute >= hourandminute2 - 5){
 				return new BellInside(desiredPeriod + " (Passing Period)", true);
 			} else {
 				return new BellInside(desiredPeriod + "", true);

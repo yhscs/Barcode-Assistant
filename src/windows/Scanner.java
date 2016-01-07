@@ -48,7 +48,7 @@ public class Scanner extends JFrame{
         new Thread() {
         	public void run() {
         		while(true) {
-        			if(counter < System.currentTimeMillis() - 3000 && needsUpdate) {
+        			if(counter < System.currentTimeMillis() - 4000 && needsUpdate) {
         				needsUpdate = false;
         				title.setText(normalTitle);
         				subtext.setText(normalSubtext);

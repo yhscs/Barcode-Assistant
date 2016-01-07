@@ -23,6 +23,8 @@ public class Keyboard implements KeyListener {
     public void keyTyped(KeyEvent e) {
         que += e.getKeyChar();
         if(que.length() > 1 && que.substring(que.length()-1, que.length()).equals("\n")) {
+        	scanner.setHeaderText("Checking you in...");
+			scanner.setSubtitleText("This shouldn't take more than a second...");
         	que = que.substring(0,que.length() - 1);
         	System.out.print(que);
         	if(que.length() == 7) {
@@ -32,10 +34,14 @@ public class Keyboard implements KeyListener {
             		DataObject data = new DataObject(que);
             		System.out.println(data);
             		try {
-            		Network.putData(null, room, roomHash, que, data.getDate().toString(), true);
+            			if(Network.putData(null, room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute(), true) == Network.SUCCESS) {
+            	        	scanner.setHeaderText("Welcome!");
+            				scanner.setSubtitleText("Thanks for signing in!");
+            			}
             		} catch (Exception ohno) {
-            			scanner.setHeaderText("Oh no!");
+            			scanner.setHeaderText("Oh no! You broke something :(");
             			scanner.setSubtitleText(ohno.getMessage());
+            			ohno.printStackTrace();
             		}
         		} catch (NumberFormatException err) {
         			System.out.println("... Declined. Not real numbers.");
