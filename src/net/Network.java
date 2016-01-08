@@ -29,7 +29,8 @@ public class Network {
 	 * @param automatic Boolean that is true if the student is being logged out automatically. 
 	 * @return An int SUCCESS or FAILURE.
 	 */
-	public static int putData(Component c, String room, String roomHash, String id, String time, int hour, int minute, boolean automatic) throws Exception {
+	public static int putData(String room, String roomHash, String id, String time, int hour, int minute, boolean automatic, boolean isCheckin) throws Exception {
+		
 		//--PREPARE DATA--
 		ArrayList<String> data = new ArrayList<>();		ArrayList<String> keys = new ArrayList<>();
 		keys.add(Indexes.REQUEST);						data.add(Request.SETDATA);
@@ -39,7 +40,7 @@ public class Network {
 		keys.add(StudentData.CHECK_TIME);				data.add(time);
 		keys.add(StudentData.AUTOMATIC);				data.add((automatic ? "1" : "0"));
 		keys.add(StudentData.PERIOD);					data.add(Bell.getBell(hour, minute));
-		keys.add(StudentData.IS_CHECIN);				data.add("0"); //TODO: This
+		keys.add(StudentData.IS_CHECIN);				data.add((isCheckin ? "1" : "0")); //TODO: This
 		//--THAT IS ALL--
 		return calculateSuccessThrowable(keys,data); // send data
 	}

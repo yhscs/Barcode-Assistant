@@ -1,5 +1,6 @@
 package windows;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,13 +25,18 @@ public class Scanner extends JFrame{
 	private volatile long counter = 0L;	
 	private volatile boolean needsUpdate = false;
 	
+	private ScaledImageLabel imageLabel = new ScaledImageLabel();
+	
 	private String roomName;
 	private JLabel title;
 	private String normalTitle = "?";
 	private JLabel subtext;
 	private String normalSubtext = "<html><center>Please use the barcode scanner and your Student ID to sign in and out of this room.</center></html>";
+	private String normalLocation = "/pictures/scan.png";
+	
 	public Scanner(String roomName, String hash) {
 		super("Scanner Utility");
+		this.getContentPane().setBackground( Color.BLACK);
         this.roomName = roomName.substring(0, 1).toUpperCase() + roomName.substring(1);
         this.normalTitle = "<html><center>" + this.roomName + " sign in/out station</center></html>";
 		Toolkit tk = Toolkit.getDefaultToolkit();
@@ -50,8 +56,9 @@ public class Scanner extends JFrame{
         		while(true) {
         			if(counter < System.currentTimeMillis() - 4000 && needsUpdate) {
         				needsUpdate = false;
+        				setImage(normalLocation);	
         				title.setText(normalTitle);
-        				subtext.setText(normalSubtext);
+        				subtext.setText(normalSubtext);	
         			}
         			try {
 						Thread.sleep(100L);
@@ -67,6 +74,8 @@ public class Scanner extends JFrame{
 		p.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
 	    c.fill = GridBagConstraints.HORIZONTAL;
+	    
+	    
 	    
 		JLabel label = new JLabel("                ",SwingConstants.CENTER);
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -85,6 +94,7 @@ public class Scanner extends JFrame{
 		title = new JLabel(normalTitle,SwingConstants.CENTER);
 		Font labelFont = title.getFont();
 		title.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
+		title.setForeground(Color.RED);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;
 		c.gridx = 1;
@@ -94,6 +104,7 @@ public class Scanner extends JFrame{
 		subtext = new JLabel(normalSubtext,SwingConstants.CENTER);
 		labelFont = subtext.getFont();
 		subtext.setFont(new Font(labelFont.getName(), Font.PLAIN, 40));
+		subtext.setForeground(Color.WHITE);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;
 		c.gridx = 1;
@@ -102,12 +113,11 @@ public class Scanner extends JFrame{
 	    
 	    BufferedImage image;
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream("/pictures/scan.png"));
-			ScaledImageLabel imageLabel = new ScaledImageLabel();
+			image = ImageIO.read(getClass().getResourceAsStream(normalLocation));
 			imageLabel.setIcon(new ImageIcon(image));
-			c.fill = GridBagConstraints.BOTH;
-		    c.weightx = 1.0;
-		    c.weighty = 1.0;
+			c.fill = GridBagConstraints.HORIZONTAL;
+		    c.weightx = 2.0;
+		    c.weighty = 2.0;
 		    c.gridx = 1;
 		    c.gridy = 2;
 		    p.add(imageLabel, c);
@@ -139,5 +149,14 @@ public class Scanner extends JFrame{
 		subtext.setText("<html><center>" + text + "</center></html>");
 		counter = System.currentTimeMillis();
 		needsUpdate = true;
+	}
+	
+	public void setImage(String location) {
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResourceAsStream(location));
+			imageLabel.setIcon(new ImageIcon(image));
+		}catch (Exception e) {
+			System.out.println(location + " not found. Try refreshing your source.");
+		}	
 	}
 }

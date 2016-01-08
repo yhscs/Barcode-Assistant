@@ -2,6 +2,7 @@ package util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import data.DataObject;
 import net.Network;
@@ -11,6 +12,9 @@ public class Keyboard implements KeyListener {
 	private String room;
 	private String roomHash;
 	private Scanner scanner;
+	
+	private ArrayList<DataObject> checkedInIds = new ArrayList<>();
+	
 	public Keyboard(Scanner s, String room, String roomHash) {
 		this.room = room;
 		this.roomHash = roomHash;
@@ -33,12 +37,44 @@ public class Keyboard implements KeyListener {
             		System.out.println("... Accepted.");
             		DataObject data = new DataObject(que);
             		System.out.println(data);
+        			boolean isNotCheckedIn = true;
+        			for(DataObject s : checkedInIds ) {
+        				if(que.equals(s.getId())) {
+        					isNotCheckedIn = false;
+        					break;
+        				}
+        			}
             		try {
-            			if(Network.putData(null, room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute(), true) == Network.SUCCESS) {
-            	        	scanner.setHeaderText("Welcome!");
-            				scanner.setSubtitleText("Thanks for signing in!");
+            			if(Network.putData(room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute(), false, isNotCheckedIn) == Network.SUCCESS) {
+            				if(isNotCheckedIn) {
+            					checkedInIds.add(data);
+                				scanner.setImage("/pictures/ok.png");	
+                				scanner.setHeaderText("Welcome!");
+                				scanner.setSubtitleText("Thanks for signing in!");	
+            				} else {
+            					for(int i = 0; i < checkedInIds.size(); i++) {
+            						if(que.equals(checkedInIds.get(i).getId())) {
+            							checkedInIds.remove(i);
+                        				scanner.setImage("/pictures/exit.png");	
+                        				scanner.setHeaderText("Goodbye!");
+                        				scanner.setSubtitleText("Thanks for signing out!");	
+            							break;
+            						}
+            					}
+            				}
             			}
             		} catch (Exception ohno) {
+        				if(isNotCheckedIn) {
+        					checkedInIds.add(data);
+        				} else {
+        					for(int i = 0; i < checkedInIds.size(); i++) {
+        						if(que.equals(checkedInIds.get(i).getId())) {
+        							checkedInIds.remove(i);
+        							break;
+        						}
+        					}
+        				}
+        				scanner.setImage("/pictures/no.png");	
             			scanner.setHeaderText("Oh no! You broke something :(");
             			scanner.setSubtitleText(ohno.getMessage());
             			ohno.printStackTrace();
