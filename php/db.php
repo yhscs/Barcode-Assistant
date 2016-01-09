@@ -3,31 +3,8 @@
 function autoLogout() {
 	//TODO: AutoLogout.
 }
-class Index {
-	const REQUEST="REQUEST";
-	const ROOM="ROOM";
-	const ROOM_PASSWORD="ROOM_PASSWORD";
-	const ROOM_SALT="ROOM_SALT";
-	const ADMIN="ADMIN";
-	const ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
-	const USER="USER";
-}
 
-class StudentData {
-	const ID="STUDID";
-	const CHECK_TIME="STUDTIME";
-	const AUTOMATIC="STUDAUTO_LOGOUT";
-	const IS_CHECKIN="IS_CHECKIN";
-	const PERIOD="PERIOD";
-}
-
-class Request {
-	const SALT = "SALTY_MC_SALTER";
-	const CREATE = "CREATE_ROOM";
-	const LOGIN = "LOGIN";
-	const SETDATA = "PLS_CREATE_DATA";
-}
-
+include '/home/aj4057/indexkeys.php'; //Index keys that are used. For example, Index::REQUEST is defined here.
 include '/home/aj4057/config.php'; //Define $servername $username $password $dbname and $configready here.
 
 try {
@@ -65,6 +42,19 @@ if (!empty($_POST)) {
 				//If we are "in" try and run the auto logout feature.
 				autoLogout();
 				
+				$stmt = $conn->prepare("SELECT STUDENT_GRADE, STUDENT_NAME, STUDENT_ID FROM STUDENT$ WHERE STUDENT_ID = :id LIMIT 1"); #Select the student name, grade, and id from the students table.
+				$stmt->execute(array('id' => $_POST[StudentData::ID])); #based on the id (that's all the info we have, we need the other pieces).
+				$row = $stmt->fetch();
+				$student_grade = "N/A";
+				$student_name = "N/A";
+				if($stmt->rowCount() == 0) { #if the row does not exist
+					echo "The Student ID you provided could not be found." . "\n"; #tell an error.
+					die();
+				} else {
+					$student_grade = $row["STUDENT_GRADE"]; #we need to set these variables for later use
+					$student_name = $row["STUDENT_NAME"]; #because we will insert them into the logs.
+				}
+				
 				$stmt = $conn->prepare("SELECT ID, ROOM, STUDENT_ID, TIME FROM LOG_INSIDE WHERE STUDENT_ID = :id AND ROOM = :name LIMIT 1"); #Select the index, room, student id, and last logged time from the people who are currently in that room.
 				$stmt->execute(array('id' => $_POST[StudentData::ID],
 									 'name' => $_POST[Index::ROOM])); #based on the id and the current selected room.
@@ -81,25 +71,12 @@ if (!empty($_POST)) {
 				} else {
 					if(($thatMuchTime = strtotime($_POST[StudentData::CHECK_TIME]) - strtotime($row["TIME"])) < 60) {
 						$thisMuchTime = 60 - $thatMuchTime;
-						echo "Sorry, but to prevent spam you need to wait at least $thisMuchTime seconds before you can sign out again!";
+						echo "Sorry, but to prevent spam you need to wait $thisMuchTime seconds. Let some other students sign out while you wait.";
 						die();
 					}
 					$index = $row["ID"];
 					$stmt = $conn->prepare("DELETE FROM LOG_INSIDE WHERE ID = :index"); #Select the id of the students that is already signed in and delete it.
 					$stmt->execute(array('index' => $index)); #based on the index.
-				}
-				
-				$stmt = $conn->prepare("SELECT STUDENT_GRADE, STUDENT_NAME, STUDENT_ID FROM STUDENT$ WHERE STUDENT_ID = :id LIMIT 1"); #Select the student name, grade, and id from the students table.
-				$stmt->execute(array('id' => $_POST[StudentData::ID])); #based on the id (that's all the info we have, we need the other pieces).
-				$row = $stmt->fetch();
-				$student_grade = "N/A";
-				$student_name = "N/A";
-				if($stmt->rowCount() == 0) { #if the row does not exist
-					echo "The Student ID you provided could not be found." . "\n"; #tell an error.
-					die();
-				} else {
-					$student_grade = $row["STUDENT_GRADE"]; #we need to set these variables for later use
-					$student_name = $row["STUDENT_NAME"]; #because we will insert them into the logs.
 				}
 				
 				$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");

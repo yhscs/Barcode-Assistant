@@ -16,9 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import data.DataObject;
 import gfx.ScaledImageLabel;
-import util.Bell;
 import util.Keyboard;
 
 @SuppressWarnings("serial")
@@ -56,7 +54,7 @@ public class Scanner extends JFrame{
         new Thread() {
         	public void run() {
           		while(true) {
-        			if(counter < System.currentTimeMillis() - 3600 && needsUpdate) {
+        			if(counter < System.currentTimeMillis() - 3200 && needsUpdate) {
         				needsUpdate = false;
         				setImage(normalLocation);	
         				title.setText(normalTitle);

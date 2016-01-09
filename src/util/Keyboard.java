@@ -24,6 +24,10 @@ public class Keyboard implements KeyListener {
     public void keyTyped(KeyEvent e) {
         que += e.getKeyChar();
         if(que.length() > 1 && que.substring(que.length()-1, que.length()).equals("\n")) {
+       		scanner.setHeaderText("Loading...");
+        	scanner.setSubtitleText("Give me a second...");
+    		scanner.setImage("/pictures/wait.png");	
+    		scanner.setImage("/pictures/wait.png");	
         	que = que.substring(0,que.length() - 1);
         	System.out.print(que);
         	if(que.length() == 7) {
@@ -32,22 +36,30 @@ public class Keyboard implements KeyListener {
             		System.out.println("... Accepted.");
             		DataObject data = new DataObject(que);
             		System.out.println(data);
-            		try {
-            			int status = Network.putData(room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute());
-            			if(status == Network.CHECKIN) {
-            				scanner.setImage("/pictures/ok.png");	
-            				scanner.setHeaderText("Welcome!");
-            				scanner.setSubtitleText("Make sure you scan your Student ID again when you leave!");	
-            			} else if (status == Network.CHECKOUT) {
-            				scanner.setImage("/pictures/exit.png");	
-            				scanner.setHeaderText("Goodbye!");
-            				scanner.setSubtitleText("Thanks for signing out! See you soon!");	
-            			}
-            		} catch (Exception ohno) {
-            			System.out.println("Something happened!");
-        				scanner.setImage("/pictures/no.png");	
-            			scanner.setHeaderText("Oh no! Something broke :(");
-            			scanner.setSubtitleText(ohno.getMessage());
+            		if(Bell.getBell(data.getDate().getHour(), data.getDate().getMinute()).equals(Bell.BEFORE_SCHOOL) || 
+            				Bell.getBell(data.getDate().getHour(), data.getDate().getMinute()).equals(Bell.AFTER_SCHOOL)) {
+                		System.out.println("... There really isn't a purpose for a student to be checking in at this time.");
+    	        		scanner.setImage("/pictures/no.png");	
+    	           		scanner.setHeaderText("No need!");
+    	            	scanner.setSubtitleText("It isn't during school hours right now. Try again some other time.");
+            		} else {
+	            		try {
+	            			int status = Network.putData(room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute());
+	            			if(status == Network.CHECKIN) {
+	            				scanner.setImage("/pictures/ok.png");	
+	            				scanner.setHeaderText("Welcome!");
+	            				scanner.setSubtitleText("Make sure you scan your Student ID again when you leave!");	
+	            			} else if (status == Network.CHECKOUT) {
+	            				scanner.setImage("/pictures/exit.png");	
+	            				scanner.setHeaderText("Goodbye!");
+	            				scanner.setSubtitleText("Thanks for signing out! See you soon!");	
+	            			}
+	            		} catch (Exception ohno) {
+	            			System.out.println("Something happened!");
+	        				scanner.setImage("/pictures/no.png");	
+	            			scanner.setHeaderText("Oh no! Something broke :(");
+	            			scanner.setSubtitleText(ohno.getMessage());
+	            		}
             		}
         		} catch (NumberFormatException err) {
         			System.out.println("... Declined. Not real numbers.");

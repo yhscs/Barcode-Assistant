@@ -7,6 +7,9 @@ public class Bell {
 		ONETHIRTYPM
 	}
 	
+	public static final String BEFORE_SCHOOL = "Before school";
+	public static final String AFTER_SCHOOL = "After school";
+	
 	private static class BellInside {
 		String response;
 		public boolean isBetween;
@@ -17,7 +20,7 @@ public class Bell {
 	}
 	public static String getBell(int hour, int minute) throws IndexOutOfBoundsException {
 		if(isBetween(0,0,7,25,hour,minute)) {
-			return "Before school";
+			return BEFORE_SCHOOL;
 		}
 		BellInside b;
 		if((b = isBetween(1,7,25,8,17,hour,minute)).isBetween) {
@@ -53,7 +56,7 @@ public class Bell {
 		if(isBetween(13,48,14,35,hour,minute)) {
 			return "11";
 		}
-		return "After school";
+		return AFTER_SCHOOL;
 	}
 	
 	public static boolean isBetween(int hour1, int minute1, int hour2, int minute2, int actualhour, int actualminute) {
