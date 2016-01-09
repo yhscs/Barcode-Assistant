@@ -16,7 +16,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import data.DataObject;
 import gfx.ScaledImageLabel;
+import util.Bell;
 import util.Keyboard;
 
 @SuppressWarnings("serial")
@@ -38,7 +40,7 @@ public class Scanner extends JFrame{
 		super("Scanner Utility");
 		this.getContentPane().setBackground( Color.BLACK);
         this.roomName = roomName.substring(0, 1).toUpperCase() + roomName.substring(1);
-        this.normalTitle = "<html><center>" + this.roomName + " sign in/out station</center></html>";
+        this.normalTitle = "<html><center>" + this.roomName + " quick attendance system.</center></html>";
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int xSize = ((int) tk.getScreenSize().getWidth());
 		int ySize = ((int) tk.getScreenSize().getHeight());
@@ -53,8 +55,8 @@ public class Scanner extends JFrame{
         this.counter = System.currentTimeMillis();
         new Thread() {
         	public void run() {
-        		while(true) {
-        			if(counter < System.currentTimeMillis() - 4000 && needsUpdate) {
+          		while(true) {
+        			if(counter < System.currentTimeMillis() - 3600 && needsUpdate) {
         				needsUpdate = false;
         				setImage(normalLocation);	
         				title.setText(normalTitle);

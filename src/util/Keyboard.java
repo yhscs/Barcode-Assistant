@@ -2,7 +2,6 @@ package util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
 import data.DataObject;
 import net.Network;
@@ -12,8 +11,6 @@ public class Keyboard implements KeyListener {
 	private String room;
 	private String roomHash;
 	private Scanner scanner;
-	
-	private ArrayList<DataObject> checkedInIds = new ArrayList<>();
 	
 	public Keyboard(Scanner s, String room, String roomHash) {
 		this.room = room;
@@ -27,8 +24,6 @@ public class Keyboard implements KeyListener {
     public void keyTyped(KeyEvent e) {
         que += e.getKeyChar();
         if(que.length() > 1 && que.substring(que.length()-1, que.length()).equals("\n")) {
-        	scanner.setHeaderText("Checking you in...");
-			scanner.setSubtitleText("This shouldn't take more than a second...");
         	que = que.substring(0,que.length() - 1);
         	System.out.print(que);
         	if(que.length() == 7) {
@@ -37,53 +32,34 @@ public class Keyboard implements KeyListener {
             		System.out.println("... Accepted.");
             		DataObject data = new DataObject(que);
             		System.out.println(data);
-        			boolean isNotCheckedIn = true;
-        			for(DataObject s : checkedInIds ) {
-        				if(que.equals(s.getId())) {
-        					isNotCheckedIn = false;
-        					break;
-        				}
-        			}
             		try {
-            			if(Network.putData(room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute(), false, isNotCheckedIn) == Network.SUCCESS) {
-            				if(isNotCheckedIn) {
-            					checkedInIds.add(data);
-                				scanner.setImage("/pictures/ok.png");	
-                				scanner.setHeaderText("Welcome!");
-                				scanner.setSubtitleText("Thanks for signing in!");	
-            				} else {
-            					for(int i = 0; i < checkedInIds.size(); i++) {
-            						if(que.equals(checkedInIds.get(i).getId())) {
-            							checkedInIds.remove(i);
-                        				scanner.setImage("/pictures/exit.png");	
-                        				scanner.setHeaderText("Goodbye!");
-                        				scanner.setSubtitleText("Thanks for signing out!");	
-            							break;
-            						}
-            					}
-            				}
+            			int status = Network.putData(room, roomHash, que, data.getDate().toString(), data.getDate().getHour(), data.getDate().getMinute());
+            			if(status == Network.CHECKIN) {
+            				scanner.setImage("/pictures/ok.png");	
+            				scanner.setHeaderText("Welcome!");
+            				scanner.setSubtitleText("Make sure you scan your Student ID again when you leave!");	
+            			} else if (status == Network.CHECKOUT) {
+            				scanner.setImage("/pictures/exit.png");	
+            				scanner.setHeaderText("Goodbye!");
+            				scanner.setSubtitleText("Thanks for signing out! See you soon!");	
             			}
             		} catch (Exception ohno) {
-        				if(isNotCheckedIn) {
-        					checkedInIds.add(data);
-        				} else {
-        					for(int i = 0; i < checkedInIds.size(); i++) {
-        						if(que.equals(checkedInIds.get(i).getId())) {
-        							checkedInIds.remove(i);
-        							break;
-        						}
-        					}
-        				}
+            			System.out.println("Something happened!");
         				scanner.setImage("/pictures/no.png");	
-            			scanner.setHeaderText("Oh no! You broke something :(");
+            			scanner.setHeaderText("Oh no! Something broke :(");
             			scanner.setSubtitleText(ohno.getMessage());
-            			ohno.printStackTrace();
             		}
         		} catch (NumberFormatException err) {
         			System.out.println("... Declined. Not real numbers.");
+                	scanner.setHeaderText("Oh no! You tried to break something :(");
+        			scanner.setSubtitleText("The thing you scanned had letters. A student ID does not contain letters.");
+        			scanner.setImage("/pictures/no.png");	
         		}
         	} else {
         		System.out.println("... Declined. Not 7 characters.");
+            	scanner.setHeaderText("Oh no! You tried to break something :(");
+    			scanner.setSubtitleText("The thing you scanned was either too long or too short.");
+    			scanner.setImage("/pictures/no.png");	
         	}
             que = "";
         }

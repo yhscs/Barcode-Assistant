@@ -38,7 +38,7 @@ public class Bell {
 		if((b = isBetween(6,11,3,11,31,hour,minute)).isBetween) {
 			return b.response;
 		}
-		if((b = isBetween(7,11,31,11,39,hour,minute)).isBetween) {
+		if((b = isBetween(7,11,31,11,59,hour,minute)).isBetween) {
 			return b.response;
 		}
 		if((b = isBetween(8,11,59,12,27,hour,minute)).isBetween) {

@@ -18,6 +18,9 @@ import util.keys.StudentData;
 public class Network {
 	public static final int FAILURE = -1;
 	public static final int SUCCESS = 0;
+	public static final int CHECKIN = 1;
+	public static final int CHECKOUT = 2;
+	
 	
 	/**
 	 * Puts some data about check in and check out times on the webserver's database. 
@@ -29,7 +32,7 @@ public class Network {
 	 * @param automatic Boolean that is true if the student is being logged out automatically. 
 	 * @return An int SUCCESS or FAILURE.
 	 */
-	public static int putData(String room, String roomHash, String id, String time, int hour, int minute, boolean automatic, boolean isCheckin) throws Exception {
+	public static int putData(String room, String roomHash, String id, String time, int hour, int minute) throws Exception {
 		
 		//--PREPARE DATA--
 		ArrayList<String> data = new ArrayList<>();		ArrayList<String> keys = new ArrayList<>();
@@ -38,9 +41,7 @@ public class Network {
 		keys.add(Indexes.ROOM_PASSWORD);				data.add(roomHash);
 		keys.add(StudentData.ID);						data.add(id);
 		keys.add(StudentData.CHECK_TIME);				data.add(time);
-		keys.add(StudentData.AUTOMATIC);				data.add((automatic ? "1" : "0"));
 		keys.add(StudentData.PERIOD);					data.add(Bell.getBell(hour, minute));
-		keys.add(StudentData.IS_CHECIN);				data.add((isCheckin ? "1" : "0")); //TODO: This
 		//--THAT IS ALL--
 		return calculateSuccessThrowable(keys,data); // send data
 	}
@@ -178,6 +179,10 @@ public class Network {
 		ret = Getter.getData(con);
 		if(ret.size() > 0 && ret.get(0).equals("OK")) {
 			return SUCCESS;
+		} else if(ret.size() > 0 && ret.get(0).equals("CHECKIN")) {
+			return CHECKIN;
+		} else if(ret.size() > 0 && ret.get(0).equals("CHECKOUT")) {
+			return CHECKOUT;
 		} else if (ret.size() > 0){
 			Exception e = new Exception((ret.get(0).equals("<br />") ? "There was a PHP error. Get a programmer to fix it." : ret.get(0)));
 			for(String s : ret) {

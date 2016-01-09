@@ -1,4 +1,8 @@
 <?php
+
+function autoLogout() {
+	//TODO: AutoLogout.
+}
 class Index {
 	const REQUEST="REQUEST";
 	const ROOM="ROOM";
@@ -42,9 +46,7 @@ if (!empty($_POST)) {
 				  && array_key_exists(Index::ROOM_PASSWORD,$_POST)
 				  && array_key_exists(StudentData::ID,$_POST)
 				  && array_key_exists(StudentData::CHECK_TIME,$_POST)
-				  && array_key_exists(StudentData::AUTOMATIC,$_POST)
-				  && array_key_exists(StudentData::PERIOD,$_POST)
-				  && array_key_exists(StudentData::IS_CHECKIN,$_POST))) {
+				  && array_key_exists(StudentData::PERIOD,$_POST))) {
 					echo "...\n";
 					die();
 				}
@@ -60,34 +62,59 @@ if (!empty($_POST)) {
 					die();
 				}
 				
+				//If we are "in" try and run the auto logout feature.
+				autoLogout();
+				
+				$stmt = $conn->prepare("SELECT ID, ROOM, STUDENT_ID, TIME FROM LOG_INSIDE WHERE STUDENT_ID = :id AND ROOM = :name LIMIT 1"); #Select the index, room, student id, and last logged time from the people who are currently in that room.
+				$stmt->execute(array('id' => $_POST[StudentData::ID],
+									 'name' => $_POST[Index::ROOM])); #based on the id and the current selected room.
+				$row = $stmt->fetch();
+				
+				$checkin = 0;
+				if($stmt->rowCount() == 0) {
+					$checkin = 1;
+					$stmt = $conn->prepare("INSERT INTO LOG_INSIDE (ID, ROOM, STUDENT_ID, TIME, PERIOD) VALUES (NULL, :username, :stud_id, :stud_time, :period)");
+					$stmt->execute(array('username' => $_POST[Index::ROOM],
+										'stud_id' => $_POST[StudentData::ID],
+										'stud_time' => $_POST[StudentData::CHECK_TIME],
+										'period' => $_POST[StudentData::PERIOD]));
+				} else {
+					if(($thatMuchTime = strtotime($_POST[StudentData::CHECK_TIME]) - strtotime($row["TIME"])) < 60) {
+						$thisMuchTime = 60 - $thatMuchTime;
+						echo "Sorry, but to prevent spam you need to wait at least $thisMuchTime seconds before you can sign out again!";
+						die();
+					}
+					$index = $row["ID"];
+					$stmt = $conn->prepare("DELETE FROM LOG_INSIDE WHERE ID = :index"); #Select the id of the students that is already signed in and delete it.
+					$stmt->execute(array('index' => $index)); #based on the index.
+				}
+				
 				$stmt = $conn->prepare("SELECT STUDENT_GRADE, STUDENT_NAME, STUDENT_ID FROM STUDENT$ WHERE STUDENT_ID = :id LIMIT 1"); #Select the student name, grade, and id from the students table.
 				$stmt->execute(array('id' => $_POST[StudentData::ID])); #based on the id (that's all the info we have, we need the other pieces).
-				$row;
-				$not_ok = true;
+				$row = $stmt->fetch();
 				$student_grade = "N/A";
 				$student_name = "N/A";
 				if($stmt->rowCount() == 0) { #if the row does not exist
-					echo "Whoops! For some reason I cannot access your information. Please tell a teacher to update the student attendance system. For now, only your student ID will be marked present."; #tell an error.
+					echo "The Student ID you provided could not be found." . "\n"; #tell an error.
+					die();
 				} else {
-					$row = $stmt->fetch();
 					$student_grade = $row["STUDENT_GRADE"]; #we need to set these variables for later use
 					$student_name = $row["STUDENT_NAME"]; #because we will insert them into the logs.
-					$not_ok = false;
 				}
 				
 				$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
 				$stmt->execute(array('username' => $_POST[Index::ROOM],
-									 'checkin' => $_POST[StudentData::IS_CHECKIN],
+									 'checkin' => $checkin,
 									 'stud_id' => $_POST[StudentData::ID],
 									 'stud_name' => $student_name,
 									 'stud_grade' => $student_grade,
 									 'stud_time' => $_POST[StudentData::CHECK_TIME],
 									 'period' => $_POST[StudentData::PERIOD],
-									 'auto' => $_POST[StudentData::AUTOMATIC]));
-				if(not_ok === true){
-					echo "Failed to fetch data." . "\n";
+									 'auto' => "0")); #The calls here should never be automatic.
+				if ($checkin === 0) {
+					echo "CHECKOUT" . "\n";
 				} else {
-					echo "OK" . "\n";
+					echo "CHECKIN" . "\n";
 				}
 				break;
 			
@@ -108,6 +135,7 @@ if (!empty($_POST)) {
 					echo "The username or password is incorrect!"; #Deny it.
 					die();
 				}
+				
 				#Account is not an admin and the passwords match!
 				echo "OK";
 				break;
