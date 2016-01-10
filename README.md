@@ -14,7 +14,7 @@ When that is done, simply copy the web-server files to the root of your server a
 ### Notes: 
 * If you would like to host it yourself, the JS Crypto library is hosted here: https://code.google.com/p/crypto-js/
 * This program (sadly) uses jquery for the post request. 
-* The Java program should be good at handling exceptions. The Java program must be running in order to log everyone out at the end of the day.
-* In order to create new accounts on the fly, an administrator account can be created by changing the "IS_ADMIN" value in the SQL database. These users can (currently) only create other, standard users to prevent someone from creating many users on a server.
+* The Java program must be running in order to log everyone out at the end of the day.
+* In order to create new accounts on the fly, an administrator account can be created by changing the "IS_ADMIN" value in the SQL database. These users can (currently) only create other standard users to prevent someone from creating many users on a server.
 * For the most part, the log viewers are dynamic and should be viewable even on mobile.
 * Credits can be found in the source code where necessary. 
