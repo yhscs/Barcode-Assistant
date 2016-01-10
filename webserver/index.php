@@ -28,7 +28,7 @@ if (!empty($_POST)) {
 	$stmt->execute(array('room' => $_POST[Index::ROOM])); #based on the room
 	$row = $stmt->fetch();
 	if($row["ISADMIN"] === "1") { #If the account is an admin
-		$error = "Administrators have not been programed to log into this database yet."; #Deny it.
+		$error = "Administrators have not been programmed to log into this database yet."; #Deny it.
 		break;
 	}
 	if($row["PASSWORD"] !== $_POST[Index::ROOM_PASSWORD]) { #if the password hash is not the stored hash
