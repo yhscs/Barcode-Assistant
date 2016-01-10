@@ -16,7 +16,7 @@ try {
 	break;
 }
 
-$per_page = 5; #how many results per page
+$per_page = 20; #how many results per page
 $stmt = $conn->prepare("SELECT count(*) FROM LOG WHERE ROOM = :where"); #Get the total amount of posts
 $stmt->execute(array('where' => $_SESSION['login_user']));
 $total_rows = $stmt->fetch(); #We have the total amount of posts
@@ -75,8 +75,19 @@ $stmt->bindParam(":starting", $start, PDO::PARAM_INT);
 $stmt->bindParam(":postsperpage", $per_page, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll(); #and put it in an array
-?>
-<table>
+?><!DOCTYPE html>
+<html>
+<head>
+	<title>Viewer</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<div id="outside">
+<h1>Attendance system for: <?php echo $_SESSION['login_user'];?></h1>
+<div id="scroller">
+<table id="main">
   <tr>
     <th>ID:</th>
     <th>Arrival or Departure:</th>		
@@ -89,23 +100,24 @@ $result = $stmt->fetchAll(); #and put it in an array
   </tr>
   <?php
   foreach ($result as $row) {
-	  echo "	<tr>";
-	  echo "		<td>" . $row["ID"] . "</td>";
-	  echo "		<td>" . ($row["CHECKIN"] === "1" ? "Arrival" : "Departure") . "</td>";
-	  echo "		<td>" . $row["STUDENT_ID"] . "</td>";
-	  echo "		<td>" . $row["STUDENT_NAME"] . "</td>";
-	  echo "		<td>" . $row["STUDENT_GRADE"] . "</td>";
-	  echo "		<td>" . $row["TIME"] . "</td>";
-	  echo "		<td>" . $row["PERIOD"] . "</td>";
-	  echo "		<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>";
-	  echo " 	</tr>";
+	  echo "	<tr>\r\n";
+	  echo "		<td>" . $row["ID"] . "</td>\r\n";
+	  echo "		<td>" . ($row["CHECKIN"] === "1" ? "Arrival" : "Departure") . "</td>\r\n";
+	  echo "		<td>" . $row["STUDENT_ID"] . "</td>\r\n";
+	  echo "		<td>" . $row["STUDENT_NAME"] . "</td>\r\n";
+	  echo "		<td>" . $row["STUDENT_GRADE"] . "</td>\r\n";
+	  echo "		<td>" . $row["TIME"] . "</td>\r\n";
+	  echo "		<td>" . $row["PERIOD"] . "</td>\r\n";
+	  echo "		<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>\r\n";
+	  echo " 	</tr>\r\n";
   }
   ?>
 </table>
+</div>
 <?
 echo "<div class=\"info\">\r\n";
 echo "	<div class=\"pages\">\r\n";
-echo "		Page: \r\n";
+echo "		Page<br> \r\n";
 $counter = 1;
 foreach ($PAGES as $i => $link){
 	if(($leftElipse === true && $counter === 2) || 
@@ -127,3 +139,7 @@ echo "	</div>\r\n";
 echo "</div>\r\n";
 } while (0); # Really works!
 ?>
+<div id="logout"><form action="/logout.php" method="get" style="padding: 0"><input type="submit" value=" Logout "></form></div>
+</div>
+</body>
+</html>

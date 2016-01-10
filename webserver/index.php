@@ -49,6 +49,8 @@ if(isset($_SESSION['login_user'])){
 <html>
 <header>
 	<title>Login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
 	<script src="/script/jquery.min.js"></script> <!-- Why do I have to use theseeee. -->
 	<script src="/script/login.js"></script>
@@ -57,11 +59,11 @@ if(isset($_SESSION['login_user'])){
 <body>
 	<div id="main">
 		<div id="login">
-			<h2>Attendance Viewer</h2>
+			<h1>Attendance Viewer</h1>
 			<form class="login">
-				<h3>Room name: </h3><input type="text" id="room" name="room"><br>
-				<h3>Password: </h3><input type="password" id="password" name="password"><br>
-				<input type="submit" value=" Login "> 
+				<h3>Room name: </h3><div class="padding"><input type="text" id="room" name="room"></div><br>
+				<h3>Password: </h3><div class="padding"><input type="password" id="password" name="password"></div><br>
+				<div class="padding"><input type="submit" value=" Login "></div>
 				<span id="error"><?php echo $error?></span>
 			</form>
 		</div>
