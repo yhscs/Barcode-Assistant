@@ -48,61 +48,23 @@ if(isset($_SESSION['login_user'])){
 <!DOCTYPE html>
 <html>
 <header>
+	<title>Login</title>
 	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
-	<script src="http://attendance.yhscs.us/script/jquery.min.js"></script> <!-- Why do I have to use theseeee. -->
+	<script src="/script/jquery.min.js"></script> <!-- Why do I have to use theseeee. -->
+	<script src="/script/login.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </header>
 <body>
-	<form class="login">
-		Room name: <input type="text" id="room" size="20"><br>
-		Password: <input type="text" id="password" size="20"><br>
-		<input type="submit" value="Submit"> 
-	</form>
-	<span><?php echo $error?></span>
-	<script>
-$('.login').on('submit', function () {
-	var room = document.getElementById("room").value;
-	var password = document.getElementById("password").value;
-	response = $.ajax({
-		url: "http://attendance.yhscs.us/db.php",
-		type:"POST",
-		data: {REQUEST: "SALTY_MC_SALTER", ROOM: room},
-		async: false
-	}).responseText;
-	var sha512 = CryptoJS.algo.SHA512.create();
-	
-	sha512.update(response.split("\n")[2]);
-	sha512.update(password);
-	
-	var hash = sha512.finalize();
-	
-	post("http://attendance.yhscs.us/index.php", {ROOM: room, ROOM_PASSWORD: hash})
-    return false;  //idk how this works.
-});
-
-//This was taken from http://stackoverflow.com/a/133997 with care.
-function post(path, params, method) {
-    method = method || "post"; // Set method to post by default if not specified.
-
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
-
-    for(var key in params) {
-        if(params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
-
-            form.appendChild(hiddenField);
-         }
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-}
-</script>
+	<div id="main">
+		<div id="login">
+			<h2>Attendance Viewer</h2>
+			<form class="login">
+				<h3>Room name: </h3><input type="text" id="room" name="room"><br>
+				<h3>Password: </h3><input type="password" id="password" name="password"><br>
+				<input type="submit" value=" Login "> 
+				<span id="error"><?php echo $error?></span>
+			</form>
+		</div>
+	</div>
 </body>
 </html>
