@@ -143,12 +143,26 @@ echo "</div>\r\n";
 ?>
 <div id="options">
 	<form id="filter">
-		<input class="none" type="radio" name="select" value="none" checked="yes">No filter<br>
-		<input class="stname" type="radio" name="select" value="name">Student name:<input type="text" id="name" name="name" class="text"><br>
-		<input class="stgrade" type="radio" name="select" value="grade">Student grade:<input type="text" id="grade" name="grade" class="text"><br>
-		<input class="stid" type="radio" name="select" value="id">Student ID:<input type="text" id="student_id" name="student_id" class="text"><br>
-		<input class="time" type="radio" name="select" value="time">Time range (YYYY-MM-DD HH:MM:SS):<br>Start date and time:<input type="text" id="time_start" name="time_start" class="text"><br>End date and time:<input type="text" id="time_end" name="time_end" class="text"><br><div class="center">
-		Sort type:<br><input type="radio" name="sort" value="new-old" checked="yes"> New on top<br><input type="radio" name="sort" value="old-new"> Old on top</div>
+		<input id="none" type="radio" name="select" value="none" checked="yes">No filter<br>
+		
+		<input id="stname" type="radio" name="select" value="name">Student name:
+		<input type="text" id="name" name="name" class="text"><br>
+		
+		<input id="stgrade" type="radio" name="select" value="grade">Student grade:
+		<input type="text" id="grade" name="grade" class="text"><br>
+		
+		<input id="stid" type="radio" name="select" value="id">Student ID:
+		<input type="text" id="student_id" name="student_id" class="text"><br>
+		
+		<input id="time" type="radio" name="select" value="time">Time range (YYYY-MM-DD HH:MM:SS):<br>
+		Start date and time:<input type="text" id="time_start" name="time_start" class="text"><br>
+		End date and time:<input type="text" id="time_end" name="time_end" class="text"><br>
+		
+		<div class="center">
+			Sort type:<br>
+			<input id="sort" type="radio" name="sort" value="new-old" checked="yes"> New on top<br>
+			<input id="sort" type="radio" name="sort" value="old-new"> Old on top
+		</div>
 		<span><?php echo $sortError;?></span>
 		<div class="padding"><input type="submit" value=" Filter! "></div>
 	</form>
