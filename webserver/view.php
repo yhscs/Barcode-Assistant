@@ -90,17 +90,17 @@ $result = $stmt->fetchAll(); #and put it in an array
 <h1>Attendance Viewer for: <?php echo $_SESSION['login_user'];?></h1>
 <div id="scroller">
 <table id="main">
-  <tr>
-    <th>ID:</th>
-    <th>Arrival or Departure:</th>		
-    <th>Student ID:</th>
-	<th>Student Name:</th>
-	<th>Student Grade:</th>
-	<th>Time of Action:</th>
-	<th>Period:</th>
-	<th>Automatic Sign Out:</th>
-  </tr>
-  <?php
+	<tr>
+		<th>ID:</th>
+		<th>Arrival or Departure:</th>		
+		<th>Student ID:</th>
+		<th>Student Name:</th>
+		<th>Student Grade:</th>
+		<th>Time of Action:</th>
+		<th>Period:</th>
+		<th>Automatic Sign Out:</th>
+	</tr>
+<?php
   foreach ($result as $row) {
 	  echo "	<tr>\r\n";
 	  echo "		<td>" . $row["ID"] . "</td>\r\n";
@@ -113,7 +113,7 @@ $result = $stmt->fetchAll(); #and put it in an array
 	  echo "		<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>\r\n";
 	  echo " 	</tr>\r\n";
   }
-  ?>
+?>
 </table>
 </div>
 <?
@@ -143,27 +143,33 @@ echo "</div>\r\n";
 ?>
 <div id="options">
 	<form id="filter">
-		<input id="none" type="radio" name="select" value="none" checked="yes">No filter<br>
+		<input id="stname"						type="checkbox" 	name="select" 	value="name">Student name:
+		<input id="name"		class="text" 	type="text" 		name="name"><br>
 		
-		<input id="stname" type="radio" name="select" value="name">Student name:
-		<input type="text" id="name" name="name" class="text"><br>
+		<input id="stgrade" 					type="checkbox" 	name="select" 	value="grade">Student grade:
+		<input id="grade" 		class="text" 	type="text" 		name="grade"><br>
 		
-		<input id="stgrade" type="radio" name="select" value="grade">Student grade:
-		<input type="text" id="grade" name="grade" class="text"><br>
+		<input id="stid" 						type="checkbox" 	name="select" 	value="id">Student ID:
+		<input id="student_id" 	class="text" 	type="text" 		name="student_id"><br>
 		
-		<input id="stid" type="radio" name="select" value="id">Student ID:
-		<input type="text" id="student_id" name="student_id" class="text"><br>
+		<input id="period_val"					type="checkbox" 	name="select" 	value="period">Period:
+		<input id="period" 		class="text" 	type="text" 		name="period"><br>
 		
-		<input id="time" type="radio" name="select" value="time">Time range (YYYY-MM-DD HH:MM:SS):<br>
-		Start date and time:<input type="text" id="time_start" name="time_start" class="text"><br>
-		End date and time:<input type="text" id="time_end" name="time_end" class="text"><br>
+		<input id="time" 						type="checkbox"		name="select" 	value="time">Time range (YYYY-MM-DD HH:MM:SS):<br>
+		
+		Start date and time:
+		<input id="time_start" 	class="text" 	type="text" 		name="time_start"><br>
+		End date and time:
+		<input id="time_end" 	class="text" 	type="text" 		name="time_end" ><br>
 		
 		<div class="center">
 			Sort type:<br>
-			<input id="sort" type="radio" name="sort" value="new-old" checked="yes"> New on top<br>
-			<input id="sort" type="radio" name="sort" value="old-new"> Old on top
+			<input id="sort" 					type="radio" 		name="sort" 	value="new-old" checked="yes"> New on top<br> 
+			<input id="sort" 					type="radio"		name="sort" 	value="old-new"> Old on top
 		</div>
+		
 		<span><?php echo $sortError;?></span>
+		
 		<div class="padding"><input type="submit" value=" Filter! "></div>
 	</form>
 </div>
