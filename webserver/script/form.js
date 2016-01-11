@@ -1,53 +1,48 @@
 $(function() {
-$("#name").attr("disabled", true);
-$("#grade").attr("disabled", true);
-$("#student_id").attr("disabled", true);
-$("#period").attr("disabled", true);
-$("#time_start").attr("disabled", true);
-$("#time_end").attr("disabled", true);
+$("#name").attr("disabled", false);
+$("#grade").attr("disabled", false);
+$("#student_id").attr("disabled", false);
+$("#period").attr("disabled", false);
+$("#time_start").attr("disabled", false);
+$("#time_end").attr("disabled", false);
 
 $('form#filter').submit(function() {
-    $("#stname").attr("disabled", true);
-	$("#stgrade").attr("disabled", true);
-	$("#stid").attr("disabled", true);
-	$("#period_val").attr("disabled", true);
-	$("#time").attr("disabled", true);
-});
-$("#stname").click(function() {
-	if(document.getElementById('stname').checked) {
-		$("#name").attr("disabled", false);
-	} else {
-		$("#name").attr("disabled", true);
+	if (!$("#name").val()) {
+		$("#name").attr("disabled", "disabled");
 	}
-});
-$("#stgrade").click(function() {
-	if(document.getElementById('stgrade').checked) {
-		$("#grade").attr("disabled", false);
-	} else {
-		$("#grade").attr("disabled", true);
+	
+	if (!$("#grade").val()) {
+		$("#grade").attr("disabled", "disabled");
 	}
-});
-$("#stid").click(function() {
-	if(document.getElementById('stid').checked) {
-		$("#student_id").attr("disabled", false);
-	} else {
-		$("#student_id").attr("disabled", true);
+	
+	if (!$("#student_id").val()) {
+		$("#student_id").attr("disabled", "disabled");
 	}
-});
-$("#period_val").click(function() {
-	if(document.getElementById('period_val').checked) {
-		$("#period").attr("disabled", false);
-	} else {
-		$("#period").attr("disabled", true);
+	
+	if (!$("#period").val()) {
+		$("#period").attr("disabled", "disabled");
 	}
-});
-$("#time").click(function() {
-	if(document.getElementById('time').checked) {
-		$("#time_start").attr("disabled", false);
-		$("#time_end").attr("disabled", false);
+	
+	var time_start = document.getElementById("time_start").value;
+	var time_end = document.getElementById("time_end").value;
+	var date_start = document.getElementById("date_start").value;
+	var date_end = document.getElementById("date_end").value;
+	if (time_start == "" || time_start.length == 0 || time_start == null){ time_start = false;} else {time_start = true;}
+	if (time_end == "" || time_end.length == 0 || time_end == null){ time_end = false;} else {time_end = true;}
+	if (date_start == "" || date_start.length == 0 || date_start == null){ date_start = false;} else {date_start = true;}
+	if (date_end == "" || date_end.length == 0 || date_end == null){ date_end = false;} else {date_end = true;}
+	if ((date_start == true) && (date_end == true)) {
+		if((time_start == true) && (time_end == true)) {
+			//continue
+		} else {
+			$("#time_start").attr("disabled", "disabled");
+			$("#time_end").attr("disabled", "disabled");
+		}
 	} else {
-		$("#time_start").attr("disabled", true);
-		$("#time_end").attr("disabled", true);
+		$("#date_start").attr("disabled", "disabled");
+		$("#date_end").attr("disabled", "disabled");
+		$("#time_start").attr("disabled", "disabled");
+		$("#time_end").attr("disabled", "disabled");
 	}
 });
 });

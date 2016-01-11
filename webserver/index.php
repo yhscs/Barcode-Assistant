@@ -4,11 +4,11 @@ include '/home/aj4057/indexkeys.php'; #Index keys that are used. For example, In
 
 do {
 session_start(); #Starting Session
-$error=''; // Variable To Store Error Message
+$error=''; #Variable To Store Error Message
 
 try {
-	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password); #login
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); #Enable errors
 } catch(PDOException $e) {
 	$error = "Could not connect to the database. This should never happen.";
 	break;
@@ -24,7 +24,7 @@ if (!empty($_POST)) {
 		$error = "The username or password was not set.";
 		break;
 	}
-	$stmt = $conn->prepare("SELECT USERNAME, PASSWORD, ISADMIN FROM USERS WHERE USERNAME = :room");
+	$stmt = $conn->prepare("SELECT USERNAME, PASSWORD, ISADMIN FROM USERS WHERE USERNAME = :room"); #select data
 	$stmt->execute(array('room' => $_POST[Index::ROOM])); #based on the room
 	$row = $stmt->fetch();
 	if($row["ISADMIN"] === "1") { #If the account is an admin
@@ -36,7 +36,7 @@ if (!empty($_POST)) {
 		break;
 	}
 	$_SESSION['login_user'] = $_POST[Index::ROOM]; #Initializing Session
-	header("location: view.php"); // Redirecting To Other Page
+	header("location: view.php"); #Redirecting To Other Page
 	$conn = null;
 }
 

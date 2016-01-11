@@ -1,4 +1,5 @@
 <?php
+#INCLUDE AND START SESSION
 include '/home/aj4057/config.php'; #Define $servername $username $password $dbname and $configready here.
 session_start();
 if(!isset($_SESSION['login_user'])){
@@ -6,8 +7,9 @@ if(!isset($_SESSION['login_user'])){
 	die();
 }
 
-
+#Do while loop allows me to terminate the task at hand.
 do {
+#CONNECT TO DATABASE
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -16,12 +18,76 @@ try {
 	break;
 }
 
-$per_page = 20; #how many results per page
-$stmt = $conn->prepare("SELECT count(*) FROM LOG WHERE ROOM = :where"); #Get the total amount of posts
-$stmt->execute(array('where' => $_SESSION['login_user']));
+#WHERE VAR FOR FILTERS
+$queryWhereVars = "";
+
+#DESC IF NOT old-new
+$queryUpDown = "DESC";
+if (isset($_GET['sort'])) {
+	if($_GET['sort'] === "old-new") {
+		$queryUpDown = "ASC";
+	}
+}
+
+#For the "name" field. Notice AND LOCATE so it uses "substring" instead of LIKE.
+$nameIsSet=false;
+if (isset($_GET['name'])) {
+	if(!($_GET['name'] === "" || $_GET['name'] == null)) {
+		$nameIsSet=true;
+		$queryWhereVars = $queryWhereVars . " AND LOCATE( :name , STUDENT_NAME ) > 0";
+	}
+} 
+
+#For the grade field.
+$gradeIsSet=false;
+if (isset($_GET['grade'])) {
+	if(!($_GET['grade'] === "" || $_GET['grade'] == null)) {
+		$gradeIsSet=true;
+		$queryWhereVars = $queryWhereVars . " AND STUDENT_GRADE = :grade";
+	}
+} 
+
+#For the student ID.
+$idIsSet=false;
+if (isset($_GET['student_id'])) {
+	if(!($_GET['student_id'] === "" || $_GET['student_id'] == null)) {
+		$idIsSet=true;
+		$queryWhereVars = $queryWhereVars . " AND STUDENT_ID = :student_id";
+	}
+}
+
+#For the period.
+$periodIsSet=false;
+if (isset($_GET['period'])) {
+	if(!($_GET['period'] === "" || $_GET['period'] == null)) {
+		$periodIsSet=true;
+		$queryWhereVars = $queryWhereVars . " AND (PERIOD = :period OR PERIOD = :periodwithpassing)";
+	}
+} 
+
+#How many results per page
+$per_page = 20;
+
+#Get the total amount of log
+$stmt = $conn->prepare("SELECT count(*) FROM LOG WHERE ROOM = :where" . $queryWhereVars);
+$stmt->bindParam(":where", $_SESSION['login_user'], PDO::PARAM_STR);
+if($nameIsSet === true) {
+	$stmt->bindParam(":name", $_GET['name'], PDO::PARAM_STR);
+}
+if($gradeIsSet === true) {
+	$stmt->bindParam(":grade", $_GET['grade'], PDO::PARAM_STR);
+}
+if($idIsSet === true) {
+	$stmt->bindParam(":student_id", $_GET['student_id'], PDO::PARAM_STR);
+}
+if($periodIsSet === true) {
+	$stmt->bindParam(":period", $_GET['period'], PDO::PARAM_STR);
+	$passing = trim($_GET['period']) . " (Passing Period)";
+	$stmt->bindParam(":periodwithpassing", $passing, PDO::PARAM_STR);
+}
+$stmt->execute();
 $total_rows = $stmt->fetch(); #We have the total amount of posts
 $num_pages=ceil((int)$total_rows[0]/$per_page); #max page number
-
 
 #never trust the user.
 if (isset($_GET['page'])) {
@@ -69,8 +135,22 @@ if(count($PAGES) > 9) {
 	$PAGES[$num_pages] = $OLDPAGES[$num_pages];
 }
 
-$stmt = $conn->prepare("SELECT * FROM LOG WHERE ROOM = :where ORDER BY ID DESC LIMIT :starting,:postsperpage"); #select the actual data
+$stmt = $conn->prepare("SELECT * FROM LOG WHERE ROOM = :where " . $queryWhereVars .  " ORDER BY ID " . $queryUpDown . " LIMIT :starting,:postsperpage"); #select the actual data
 $stmt->bindParam(":where", $_SESSION['login_user'], PDO::PARAM_STR);
+if($nameIsSet === true) {
+	$stmt->bindParam(":name", $_GET['name'], PDO::PARAM_STR);
+}
+if($gradeIsSet === true) {
+	$stmt->bindParam(":grade", $_GET['grade'], PDO::PARAM_STR);
+}
+if($idIsSet === true) {
+	$stmt->bindParam(":student_id", $_GET['student_id'], PDO::PARAM_STR);
+}
+if($periodIsSet === true) {
+	$stmt->bindParam(":period", $_GET['period'], PDO::PARAM_STR);
+	$passing = trim($_GET['period']) . " (Passing Period)";
+	$stmt->bindParam(":periodwithpassing", $passing, PDO::PARAM_STR);
+}
 $stmt->bindParam(":starting", $start, PDO::PARAM_INT);
 $stmt->bindParam(":postsperpage", $per_page, PDO::PARAM_INT);
 $stmt->execute();
@@ -116,51 +196,56 @@ $result = $stmt->fetchAll(); #and put it in an array
 ?>
 </table>
 </div>
+<div class="info">
+
 <?
-echo "<div class=\"info\">\r\n";
-echo "	<div class=\"pages\">\r\n";
-echo "		Page<br> \r\n";
-$counter = 1;
-foreach ($PAGES as $i => $link){
-	if(($leftElipse === true && $counter === 2) || 
-	   ($rightElipse === true && $counter === 9)) {
-		echo "		<b> ... </b>\r\n";
-	}
-	if ($i == $CUR_PAGE){
-		echo "		<b>" . $i . "</b>\r\n";
-	} else {
-		if ($i == 1) {
-			echo "		<a href=\"" . explode('?', $link, 2)[0] . "\">" . $i . "</a>\r\n";
+if($num_pages != 0) {
+	echo "	<div class=\"pages\">\r\n";
+	echo "		Page<br> \r\n";
+	$counter = 1;
+	foreach ($PAGES as $i => $link){
+		if(($leftElipse === true && $counter === 2) || 
+		   ($rightElipse === true && $counter === 9)) {
+			echo "		<b> ... </b>\r\n";
+		}
+		if ($i == $CUR_PAGE){
+			echo "		<b>" . $i . "</b>\r\n";
 		} else {
 			echo "		<a href=\"" . $link . "\">" . $i . "</a>\r\n";
 		}
+		$counter++;
 	}
-	$counter++;
+	echo "	</div>\r\n";
+} else {
+	echo "<span>No results</span>\r\n";
 }
-echo "	</div>\r\n";
-echo "</div>\r\n";
-} while (0); # Really works!
+
+} while (0); #If there is a break, the code will jump to here automatically.
 ?>
+
+</div>
 <div id="options">
 	<form id="filter">
-		<input id="stname"						type="checkbox" 	name="select" 	value="name">Student name:
-		<input id="name"		class="text" 	type="text" 		name="name"><br>
+		Student name:
+		<input id="name"		class="text" 		type="text" 		name="name" 		placeholder="Part of name or whole name"><br>
 		
-		<input id="stgrade" 					type="checkbox" 	name="select" 	value="grade">Student grade:
-		<input id="grade" 		class="text" 	type="text" 		name="grade"><br>
+		Student grade:
+		<input id="grade" 		class="text" 		type="text" 		name="grade" 		placeholder="Any value 9-12"><br>
 		
-		<input id="stid" 						type="checkbox" 	name="select" 	value="id">Student ID:
-		<input id="student_id" 	class="text" 	type="text" 		name="student_id"><br>
+		Student ID:
+		<input id="student_id" 	class="text" 		type="text" 		name="student_id" 	placeholder="Seven digit Student ID"><br>
 		
-		<input id="period_val"					type="checkbox" 	name="select" 	value="period">Period:
-		<input id="period" 		class="text" 	type="text" 		name="period"><br>
+		Period:
+		<input id="period" 		class="text" 		type="text" 		name="period" 		placeholder="Any value 1-11"><br>
 		
-		<input id="time" 						type="checkbox"		name="select" 	value="time">Time range (YYYY-MM-DD HH:MM:SS):<br>
+		Start date and time:<br>
+		<input id="date_start" 	class="texthalf"	type="date" 		name="date_start" 	placeholder="Date: YYYY-MM-DD">
+		<input id="time_start" 	class="texthalf"	type="time" 		name="time_start" 	placeholder="Time: HH:MM (optional) "><br>
 		
-		Start date and time:
-		<input id="time_start" 	class="text" 	type="text" 		name="time_start"><br>
 		End date and time:
-		<input id="time_end" 	class="text" 	type="text" 		name="time_end" ><br>
+		<label style="float: right"><input id="now" 		class="now"			type="checkbox" 	name="now">(Use current time)</label><br>
+		<input id="date_end" 	class="texthalf"	type="date" 		name="date_end" 	placeholder="Date: YYYY-MM-DD">
+		<input id="time_end" 	class="texthalf"	type="time" 		name="time_end" 	placeholder="Time: HH:MM (optional)"><br>
 		
 		<div class="center">
 			Sort type:<br>
