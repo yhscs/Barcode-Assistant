@@ -26,13 +26,9 @@ h3 {
 	text-align:left;
 	color: #777;
 }
-form {
-	padding-top: 20px;
-}
 #login {
 	padding: 0 0 16px 0;
-	margin: auto;
-	margin-top: 70px;
+	margin: 70px auto;
 	width:380px;
 	border-radius:10px;
 	font-family:helvetica;
@@ -50,7 +46,7 @@ form {
 #scroller {
 	 overflow-y: hidden; overflow-x: auto;
 }
-input[type=text],input[type=password] {
+#room,#password {
 	padding:10px;
 	width:100%;
 	border:1px solid #ccc;
@@ -58,7 +54,7 @@ input[type=text],input[type=password] {
 	font-family:raleway;
 	box-sizing: border-box;
 }
-input[type=submit] { 
+input[type=submit], button { 
 	width:100%;
 	background-color:#FFBC00;
 	color:#fff;
@@ -70,7 +66,7 @@ input[type=submit] {
 	margin:6px 0 0;
 	box-sizing: border-box;
 }
-input[type=submit]:hover {
+input[type=submit]:hover , button:hover{
 	background-color:#FFCD00;
 	border:2px solid #FFED00;
 }
@@ -103,6 +99,31 @@ input[type=submit]:hover {
 }
 .pages a:hover {
 	background-color: #999;
+}
+.login {
+	padding-top: 20px;
+}
+.center {
+	text-align:center;
+	margin: 0 auto;
+	width: 100%;
+}
+#options {
+	max-width:500px;
+	margin: 0 auto 20px;
+	padding: 0;
+}
+#options h1 {
+	padding: 0;
+	margin: 0; 
+}
+#outside input.text{
+	padding:10px;
+	width:100%;
+	border:1px solid #ccc;
+	font-size:16px;
+	font-family:raleway;
+	box-sizing: border-box;
 }
 #logout {
 	max-width: 200px;

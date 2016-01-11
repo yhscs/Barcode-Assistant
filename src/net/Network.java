@@ -8,7 +8,6 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
-import util.Bell;
 import util.Constants;
 import util.HashAndReturn;
 import util.keys.Indexes;
@@ -32,7 +31,7 @@ public class Network {
 	 * @param automatic Boolean that is true if the student is being logged out automatically. 
 	 * @return An int SUCCESS or FAILURE.
 	 */
-	public static int putData(String room, String roomHash, String id, String time, int hour, int minute) throws Exception {
+	public static int putData(String room, String roomHash, String id) throws Exception {
 		
 		//--PREPARE DATA--
 		ArrayList<String> data = new ArrayList<>();		ArrayList<String> keys = new ArrayList<>();
@@ -40,8 +39,6 @@ public class Network {
 		keys.add(Indexes.ROOM);							data.add(room);
 		keys.add(Indexes.ROOM_PASSWORD);				data.add(roomHash);
 		keys.add(StudentData.ID);						data.add(id);
-		keys.add(StudentData.CHECK_TIME);				data.add(time);
-		keys.add(StudentData.PERIOD);					data.add(Bell.getBell(hour, minute));
 		//--THAT IS ALL--
 		return calculateSuccessThrowable(keys,data); // send data
 	}

@@ -76,7 +76,6 @@ public class Scanner extends JFrame{
 	    c.fill = GridBagConstraints.HORIZONTAL;
 	    
 	    
-	    
 		JLabel label = new JLabel("                ",SwingConstants.CENTER);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;

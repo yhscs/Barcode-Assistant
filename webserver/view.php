@@ -45,7 +45,7 @@ if ($tmpget) {
 for($i=1;$i<=$num_pages;$i++) {
 	$PAGES[$i]=$uri.'page='.$i;
 }
-if(count($PAGES) > 8) {
+if(count($PAGES) > 9) {
 	$leftElipse = true;
 	$rightElipse = true;
 	$OLDPAGES = $PAGES;
@@ -82,10 +82,12 @@ $result = $stmt->fetchAll(); #and put it in an array
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<script src="/script/jquery.min.js"></script>
+	<script src="/script/form.js"></script>
 </head>
 <body>
 <div id="outside">
-<h1>Attendance system for: <?php echo $_SESSION['login_user'];?></h1>
+<h1>Attendance Viewer for: <?php echo $_SESSION['login_user'];?></h1>
 <div id="scroller">
 <table id="main">
   <tr>
@@ -139,7 +141,26 @@ echo "	</div>\r\n";
 echo "</div>\r\n";
 } while (0); # Really works!
 ?>
-<div id="logout"><form action="/logout.php" method="get" style="padding: 0"><input type="submit" value=" Logout "></form></div>
+<div id="options">
+	<form id="filter">
+		<input class="none" type="radio" name="select" value="none" checked="yes">No filter<br>
+		<input class="stname" type="radio" name="select" value="name">Student name:<input type="text" id="name" name="name" class="text"><br>
+		<input class="stgrade" type="radio" name="select" value="grade">Student grade:<input type="text" id="grade" name="grade" class="text"><br>
+		<input class="stid" type="radio" name="select" value="id">Student ID:<input type="text" id="student_id" name="student_id" class="text"><br>
+		<input class="time" type="radio" name="select" value="time">Time range (YYYY-MM-DD HH:MM:SS):<br>Start date and time:<input type="text" id="time_start" name="time_start" class="text"><br>End date and time:<input type="text" id="time_end" name="time_end" class="text"><br><div class="center">
+		Sort type:<br><input type="radio" name="sort" value="new-old" checked="yes"> New on top<br><input type="radio" name="sort" value="old-new"> Old on top</div>
+		<span><?php echo $sortError;?></span>
+		<div class="padding"><input type="submit" value=" Filter! "></div>
+	</form>
+</div>
+<div id="logout">
+	<form action="/view.php" method="get" style="padding: 0">
+		<button type="submit" name="view" value="current">Students in Room</button>
+	</form>
+	<form action="/logout.php" method="get" style="padding: 0">
+		<input type="submit" value=" Logout ">
+	</form>
+</div>
 </div>
 </body>
 </html>

@@ -51,10 +51,10 @@ if(isset($_SESSION['login_user'])){
 	<title>Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
 	<script src="/script/jquery.min.js"></script> <!-- Why do I have to use theseeee. -->
 	<script src="/script/login.js"></script>
-	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </header>
 <body>
 	<div id="main">

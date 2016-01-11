@@ -3,6 +3,75 @@
 function autoLogout() {
 	//TODO: AutoLogout.
 }
+function getPeriod($time) {
+	if($time < date('H:i:s',strtotime("7:25:00"))) {
+		return "Before school";
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("8:17:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "1";
+		} else {
+			return "1 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("9:09:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "2";
+		} else {
+			return "2 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("10:01:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "3";
+		} else {
+			return "3 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("10:35:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "4";
+		} else {
+			return "4 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:03:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "5";
+		} else {
+			return "5 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:31:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "6";
+		} else {
+			return "6 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:59:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "7";
+		} else {
+			return "7 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("12:27:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "8";
+		} else {
+			return "8 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("12:56:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "9";
+		} else {
+			return "9 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("13:48:00")))) {
+		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
+			return "10";
+		} else {
+			return "10 (Passing period)";
+		}
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("14:35:00")))) {
+		return "11";
+	} else {
+		return "After school";
+	}
+}
 
 include '/home/aj4057/indexkeys.php'; //Index keys that are used. For example, Index::REQUEST is defined here.
 include '/home/aj4057/config.php'; //Define $servername $username $password $dbname and $configready here.
@@ -21,9 +90,7 @@ if (!empty($_POST)) {
 			case Request::SETDATA:
 				if(!(array_key_exists(Index::ROOM,$_POST)
 				  && array_key_exists(Index::ROOM_PASSWORD,$_POST)
-				  && array_key_exists(StudentData::ID,$_POST)
-				  && array_key_exists(StudentData::CHECK_TIME,$_POST)
-				  && array_key_exists(StudentData::PERIOD,$_POST))) {
+				  && array_key_exists(StudentData::ID,$_POST))) {
 					echo "...\n";
 					die();
 				}
@@ -55,6 +122,10 @@ if (!empty($_POST)) {
 					$student_name = $row["STUDENT_NAME"]; #because we will insert them into the logs.
 				}
 				
+				date_default_timezone_set('America/Chicago');
+				$date = date('Y-m-d H:i:s');
+				$period = getPeriod(date('H:i:s'));
+				
 				$stmt = $conn->prepare("SELECT ID, ROOM, STUDENT_ID, TIME FROM LOG_INSIDE WHERE STUDENT_ID = :id AND ROOM = :name LIMIT 1"); #Select the index, room, student id, and last logged time from the people who are currently in that room.
 				$stmt->execute(array('id' => $_POST[StudentData::ID],
 									 'name' => $_POST[Index::ROOM])); #based on the id and the current selected room.
@@ -66,12 +137,12 @@ if (!empty($_POST)) {
 					$stmt = $conn->prepare("INSERT INTO LOG_INSIDE (ID, ROOM, STUDENT_ID, TIME, PERIOD) VALUES (NULL, :username, :stud_id, :stud_time, :period)");
 					$stmt->execute(array('username' => $_POST[Index::ROOM],
 										'stud_id' => $_POST[StudentData::ID],
-										'stud_time' => $_POST[StudentData::CHECK_TIME],
-										'period' => $_POST[StudentData::PERIOD]));
+										'stud_time' => $date,
+										'period' => $period));
 				} else {
-					if(($thatMuchTime = strtotime($_POST[StudentData::CHECK_TIME]) - strtotime($row["TIME"])) < 60) {
-						$thisMuchTime = 60 - $thatMuchTime;
-						echo "Sorry, but to prevent spam you need to wait $thisMuchTime seconds. Let some other students sign out while you wait.";
+					if(($thatMuchTime = strtotime($date) - strtotime($row["TIME"])) < 15) {
+						$thisMuchTimeIn = 15 - $thatMuchTime;
+						echo "Sorry, but to prevent spam you need to wait $thisMuchTimeIn seconds. Let some other students sign out while you wait.";
 						die();
 					}
 					$index = $row["ID"];
@@ -85,8 +156,8 @@ if (!empty($_POST)) {
 									 'stud_id' => $_POST[StudentData::ID],
 									 'stud_name' => $student_name,
 									 'stud_grade' => $student_grade,
-									 'stud_time' => $_POST[StudentData::CHECK_TIME],
-									 'period' => $_POST[StudentData::PERIOD],
+									 'stud_time' => $date,
+									 'period' => $period,
 									 'auto' => "0")); #The calls here should never be automatic.
 				if ($checkin === 0) {
 					echo "CHECKOUT" . "\n";
