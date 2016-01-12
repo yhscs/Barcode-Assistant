@@ -257,13 +257,11 @@ if($num_pages != 0) { 											?>
 		Period:
 		<input id="period" 		class="text" 		type="number" 		name="period" 		placeholder="Any value 1-11" min="1" max="11"><br>
 		
-		Start date and time:<br>
-		<input id="date_start" 	class="texthalf"	type="date" 		name="date_start" 	placeholder="Date: YYYY-MM-DD">
-		<input id="time_start" 	class="texthalf"	type="time" 		name="time_start" 	placeholder="Time: HH:MM (optional) "><br>
+		Start date:<br>
+		<input id="date_start" 	class="text"		type="date" 		name="date_start" 	placeholder="Date: YYYY-MM-DD"><br>
 		
-		End date and time:<br>
-		<input id="date_end" 	class="texthalf"	type="date" 		name="date_end" 	placeholder="Date: YYYY-MM-DD">
-		<input id="time_end" 	class="texthalf"	type="time" 		name="time_end" 	placeholder="Time: HH:MM (optional)"><br> 
+		End date:<br>
+		<input id="date_end" 	class="text"		type="date" 		name="date_end" 	placeholder="Date: YYYY-MM-DD"><br>
 		
 		<div class="center">
 			Sort type:<br>
