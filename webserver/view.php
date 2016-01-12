@@ -87,9 +87,9 @@ if($periodIsSet === true) {
 }
 $stmt->execute();
 $total_rows = $stmt->fetch(); #We have the total amount of posts
-$num_pages=ceil((int)$total_rows[0]/$per_page); #max page number
+$num_pages=ceil((int)$total_rows[0]/$per_page); #Maximum page number
 
-#never trust the user.
+#Never trust the user. (Fix page if wrong)
 if (isset($_GET['page'])) {
 	$CUR_PAGE = intval($_GET['page']);
 } else {
@@ -98,19 +98,22 @@ if (isset($_GET['page'])) {
 if ($CUR_PAGE > $num_pages || $CUR_PAGE <= 0) {
 	$CUR_PAGE = 1;
 }
-$start = abs(($CUR_PAGE-1)*$per_page); #now figure out where to start
+$start = abs(($CUR_PAGE-1)*$per_page); #Now figure out where to start
 
-#now let's form new query string without page variable
+#Now let's form new query string without page variable
 $uri = strtok($_SERVER['REQUEST_URI'],"?")."?";    
 $tmpget = $_GET;
 unset($tmpget['page']);
 if ($tmpget) {
   $uri .= http_build_query($tmpget)."&";
 }
+
 #now we're getting total pages number and fill an array of links
 for($i=1;$i<=$num_pages;$i++) {
 	$PAGES[$i]=$uri.'page='.$i;
 }
+
+#This little if statement breaks up the page count if there are more than 10 pages to display.
 if(count($PAGES) > 9) {
 	$leftElipse = true;
 	$rightElipse = true;
@@ -135,6 +138,7 @@ if(count($PAGES) > 9) {
 	$PAGES[$num_pages] = $OLDPAGES[$num_pages];
 }
 
+#Run our query for real this time.
 $stmt = $conn->prepare("SELECT * FROM LOG WHERE ROOM = :where " . $queryWhereVars .  " ORDER BY ID " . $queryUpDown . " LIMIT :starting,:postsperpage"); #select the actual data
 $stmt->bindParam(":where", $_SESSION['login_user'], PDO::PARAM_STR);
 if($nameIsSet === true) {
@@ -154,7 +158,9 @@ if($periodIsSet === true) {
 $stmt->bindParam(":starting", $start, PDO::PARAM_INT);
 $stmt->bindParam(":postsperpage", $per_page, PDO::PARAM_INT);
 $stmt->execute();
-$result = $stmt->fetchAll(); #and put it in an array
+
+#and put it in an array
+$result = $stmt->fetchAll();
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -180,49 +186,62 @@ $result = $stmt->fetchAll(); #and put it in an array
 		<th>Period:</th>
 		<th>Automatic Sign Out:</th>
 	</tr>
-<?php
-  foreach ($result as $row) {
-	  echo "	<tr>\r\n";
-	  echo "		<td>" . $row["ID"] . "</td>\r\n";
-	  echo "		<td>" . ($row["CHECKIN"] === "1" ? "Arrival" : "Departure") . "</td>\r\n";
-	  echo "		<td>" . $row["STUDENT_ID"] . "</td>\r\n";
-	  echo "		<td>" . $row["STUDENT_NAME"] . "</td>\r\n";
-	  echo "		<td>" . $row["STUDENT_GRADE"] . "</td>\r\n";
-	  echo "		<td>" . $row["TIME"] . "</td>\r\n";
-	  echo "		<td>" . $row["PERIOD"] . "</td>\r\n";
-	  echo "		<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>\r\n";
-	  echo " 	</tr>\r\n";
-  }
-?>
+<?php foreach ($result as $row) {	?>
+	<?php echo "<tr>";	?>
+	
+		<?php echo "<td>" . $row["ID"] . "</td>";	?>
+		
+		<?php echo "<td>" . ($row["CHECKIN"] === "1" ? "Arrival" : "Departure") . "</td>";	?>
+		
+		<?php echo "<td>" . $row["STUDENT_ID"] . "</td>"	;	?>
+		
+		<?php echo "<td>" . $row["STUDENT_NAME"] . "</td>";		?>
+		
+		<?php echo "<td>" . $row["STUDENT_GRADE"] . "</td>";	?>
+		
+		<?php echo "<td>" . $row["TIME"] . "</td>";		?>
+		
+		<?php echo "<td>" . $row["PERIOD"] . "</td>";	?>
+		
+		<?php echo "<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>";	?>
+		
+	<?php echo "</tr>";	?>
+	
+<?php } 	?>
 </table>
 </div>
 <div class="info">
-
-<?
-if($num_pages != 0) {
-	echo "	<div class=\"pages\">\r\n";
-	echo "		Page<br> \r\n";
+<?php 
+if($num_pages != 0) { 											?>
+	<div class="pages">
+	Page<br>
+	
+<?php 
 	$counter = 1;
 	foreach ($PAGES as $i => $link){
 		if(($leftElipse === true && $counter === 2) || 
-		   ($rightElipse === true && $counter === 9)) {
-			echo "		<b> ... </b>\r\n";
-		}
-		if ($i == $CUR_PAGE){
-			echo "		<b>" . $i . "</b>\r\n";
-		} else {
-			echo "		<a href=\"" . $link . "\">" . $i . "</a>\r\n";
-		}
+		   ($rightElipse === true && $counter === 9)) { 		?>
+		<b> ... </b>
+		
+<?php 	}
+		if ($i == $CUR_PAGE){ 									?>
+		<b> <?php echo $i;?> </b>
+		
+<?php 	} else { 												?>
+		<a href=" <?php echo $link;?> "> <?php echo $i; ?></a>
+		
+<?php	}
 		$counter++;
-	}
-	echo "	</div>\r\n";
-} else {
-	echo "<span>No results</span>\r\n";
+	}															?>
+	</div>
+<?php
+} else {														?>
+	<span>No results</span>
+<?php
 }
 
 } while (0); #If there is a break, the code will jump to here automatically.
-?>
-
+																?>
 </div>
 <div id="options">
 	<form id="filter">
@@ -230,27 +249,26 @@ if($num_pages != 0) {
 		<input id="name"		class="text" 		type="text" 		name="name" 		placeholder="Part of name or whole name"><br>
 		
 		Student grade:
-		<input id="grade" 		class="text" 		type="text" 		name="grade" 		placeholder="Any value 9-12"><br>
+		<input id="grade" 		class="text" 		type="number" 		name="grade" 		placeholder="Any value 9-12" min="9" max="12"><br>
 		
 		Student ID:
 		<input id="student_id" 	class="text" 		type="text" 		name="student_id" 	placeholder="Seven digit Student ID"><br>
 		
 		Period:
-		<input id="period" 		class="text" 		type="text" 		name="period" 		placeholder="Any value 1-11"><br>
+		<input id="period" 		class="text" 		type="number" 		name="period" 		placeholder="Any value 1-11" min="1" max="11"><br>
 		
 		Start date and time:<br>
 		<input id="date_start" 	class="texthalf"	type="date" 		name="date_start" 	placeholder="Date: YYYY-MM-DD">
 		<input id="time_start" 	class="texthalf"	type="time" 		name="time_start" 	placeholder="Time: HH:MM (optional) "><br>
 		
-		End date and time:
-		<label style="float: right"><input id="now" 		class="now"			type="checkbox" 	name="now">(Use current time)</label><br>
+		End date and time:<br>
 		<input id="date_end" 	class="texthalf"	type="date" 		name="date_end" 	placeholder="Date: YYYY-MM-DD">
-		<input id="time_end" 	class="texthalf"	type="time" 		name="time_end" 	placeholder="Time: HH:MM (optional)"><br>
+		<input id="time_end" 	class="texthalf"	type="time" 		name="time_end" 	placeholder="Time: HH:MM (optional)"><br> 
 		
 		<div class="center">
 			Sort type:<br>
-			<input id="sort" 					type="radio" 		name="sort" 	value="new-old" checked="yes"> New on top<br> 
-			<input id="sort" 					type="radio"		name="sort" 	value="old-new"> Old on top
+			<label><input id="sort" 				type="radio" 		name="sort" 	value="new-old" checked="yes"> New on top</label><br> 
+			<label><input id="sort" 				type="radio"		name="sort" 	value="old-new"> Old on top</label>
 		</div>
 		
 		<span><?php echo $sortError;?></span>

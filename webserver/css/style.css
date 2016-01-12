@@ -56,9 +56,9 @@ h3 {
 }
 input[type=submit], button { 
 	width:100%;
-	background-color:#FFBC00;
+	background-color:#DD0000;
 	color:#fff;
-	border:2px solid #FFCB00;
+	border:2px solid #FF0000;
 	padding:10px;
 	font-size:20px;
 	cursor:pointer;
@@ -67,8 +67,8 @@ input[type=submit], button {
 	box-sizing: border-box;
 }
 input[type=submit]:hover , button:hover{
-	background-color:#FFCD00;
-	border:2px solid #FFED00;
+	background-color:#EE0000;
+	border:2px solid #FF0000;
 }
 .padding {
 	padding:0 40px;
