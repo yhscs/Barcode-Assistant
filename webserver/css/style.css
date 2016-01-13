@@ -107,6 +107,11 @@ input[type=submit]:hover , button:hover{
 	text-align:center;
 	margin: 0 auto;
 	width: 100%;
+	display: block;
+	padding: 0;
+}
+.titlepadding {
+	padding: 8px 0 0 2px ;
 }
 #options {
 	max-width:500px;

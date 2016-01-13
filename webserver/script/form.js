@@ -23,15 +23,15 @@ $('form#filter').submit(function() {
 		$("#period").attr("disabled", "disabled");
 	}
 	
-	var date_start = document.getElementById("date_start").value;
-	var date_end = document.getElementById("date_end").value;
+	var start_date = document.getElementById("start_date").value;
+	var end_date = document.getElementById("end_date").value;
 	
-	if (date_start == "" || date_start.length == 0 || date_start == null){ date_start = false;} else {date_start = true;}
-	if (date_end == "" || date_end.length == 0 || date_end == null){ date_end = false;} else {date_end = true;}
+	if (start_date == "" || start_date.length == 0 || start_date == null){ start_date = false;} else {start_date = true;}
+	if (end_date == "" || end_date.length == 0 || end_date == null){ end_date = false;} else {end_date = true;}
 	
-	if ((date_start == false) && (date_end == false)) {
-		$("#date_start").attr("disabled", "disabled");
-		$("#date_end").attr("disabled", "disabled");
+	if ((start_date == false) && (end_date == false)) {
+		$("#start_date").attr("disabled", "disabled");
+		$("#end_date").attr("disabled", "disabled");
 	}
 	
 });

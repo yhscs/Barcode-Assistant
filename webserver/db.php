@@ -90,6 +90,15 @@ if (!empty($_POST)) {
 					echo "...\n";
 					die();
 				}
+				#Check school hours first!
+				date_default_timezone_set('America/Chicago');
+				$date = date('Y-m-d H:i:s');
+				$period = getPeriod(date('H:i:s'));
+				if($period === "Before school" || $period === "After school") {
+					echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
+					die();
+				}
+				
 				$stmt = $conn->prepare("SELECT USERNAME, PASSWORD, ISADMIN FROM USERS WHERE USERNAME = :name LIMIT 1"); #Select usernames, passwords, and account
 				$stmt->execute(array('name' => $_POST[Index::ROOM])); #based on the room
 				$row = $stmt->fetch();
@@ -114,15 +123,6 @@ if (!empty($_POST)) {
 					$student_grade = $row["STUDENT_GRADE"]; #we need to set these variables for later use
 					$student_name = $row["STUDENT_NAME"]; #because we will insert them into the logs.
 				}
-				
-				date_default_timezone_set('America/Chicago');
-				$date = date('Y-m-d H:i:s');
-				$period = getPeriod(date('H:i:s'));
-				
-				//if($period === "Before school" || $period === "After school") {
-				//	echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
-				//	die();
-				//}
 				
 				$stmt = $conn->prepare("SELECT ID, ROOM, STUDENT_ID, TIME FROM LOG_INSIDE WHERE STUDENT_ID = :id AND ROOM = :name LIMIT 1"); #Select the index, room, student id, and last logged time from the people who are currently in that room.
 				$stmt->execute(array('id' => $_POST[StudentData::ID],

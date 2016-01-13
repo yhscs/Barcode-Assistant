@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -150,9 +151,19 @@ public class Scanner extends JFrame{
 		needsUpdate = true;
 	}
 	
+	private ArrayList<String> loadedlocations = new ArrayList<>();
+	private ArrayList<BufferedImage> loadedimages = new ArrayList<>();
 	public void setImage(String location) {
+		for(int i = 0; i < loadedlocations.size(); i++) {
+			if(location.equals(loadedlocations.get(i))) {
+				imageLabel.setIcon(new ImageIcon(loadedimages.get(i)));
+				return;
+			}
+		}
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResourceAsStream(location));
+			loadedlocations.add(location);
+			loadedimages.add(image);
 			imageLabel.setIcon(new ImageIcon(image));
 		}catch (Exception e) {
 			System.out.println(location + " not found. Try refreshing your source.");

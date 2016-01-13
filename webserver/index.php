@@ -36,6 +36,8 @@ if (!empty($_POST)) {
 		break;
 	}
 	$_SESSION['login_user'] = $_POST[Index::ROOM]; #Initializing Session
+	$_SESSION['timestamp'] = date("Y-m-d H:i:s"); #Initializing Session
+	$_SESSION['valid'] = "true";
 	header("location: view.php"); #Redirecting To Other Page
 	$conn = null;
 }
