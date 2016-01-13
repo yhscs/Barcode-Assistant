@@ -86,11 +86,18 @@ if (isset($_GET['end_date'])) {
 	}
 } 
 
+$fromWhere = "LOG";
+if (isset($_GET['view'])) {
+	if($_GET['view'] === "current") {
+		$fromWhere = "LOG_INSIDE";
+	}
+}
+
 #How many results per page
 $per_page = 20;
 
 #Get the total amount of log
-$stmt = $conn->prepare("SELECT count(*) FROM LOG WHERE ROOM = :where" . $queryWhereVars);
+$stmt = $conn->prepare("SELECT count(*) FROM " . $fromWhere . " WHERE ROOM = :where" . $queryWhereVars);
 $stmt->bindParam(":where", $_SESSION['login_user'], PDO::PARAM_STR);
 if($nameIsSet === true) {
 	$stmt->bindParam(":name", $_GET['name'], PDO::PARAM_STR);
@@ -160,7 +167,7 @@ if(count($PAGES) > 9) {
 }
 
 #Run our query for real this time.
-$stmt = $conn->prepare("SELECT * FROM LOG WHERE ROOM = :where " . $queryWhereVars .  " ORDER BY ID " . $queryUpDown . " LIMIT :starting,:postsperpage"); #select the actual data
+$stmt = $conn->prepare("SELECT * FROM " . $fromWhere . " WHERE ROOM = :where " . $queryWhereVars .  " ORDER BY ID " . $queryUpDown . " LIMIT :starting,:postsperpage"); #select the actual data
 $stmt->bindParam(":where", $_SESSION['login_user'], PDO::PARAM_STR);
 if($nameIsSet === true) {
 	$stmt->bindParam(":name", $_GET['name'], PDO::PARAM_STR);
@@ -194,9 +201,18 @@ $result = $stmt->fetchAll();
 </head>
 <body>
 <div id="outside">
+<?php
+if($fromWhere === "LOG") { ?>
 <h1>Attendance Viewer for: <?php echo $_SESSION['login_user'];?></h1>
+<?php
+} else { ?>
+<h1>Current students for: <?php echo $_SESSION['login_user'];?></h1>
+<?php
+}?>
 <div id="scroller">
 <table id="main">
+<?php
+if($fromWhere === "LOG") { ?>
 	<tr>
 		<th>ID:</th>
 		<th>Arrival or Departure:</th>		
@@ -207,12 +223,24 @@ $result = $stmt->fetchAll();
 		<th>Period:</th>
 		<th>Automatic Sign Out:</th>
 	</tr>
-<?php foreach ($result as $row) {	?>
+<?php
+} else { ?>
+	<tr>
+		<th>ID:</th>
+		<th>Student ID:</th>
+		<th>Student Name:</th>
+		<th>Student Grade:</th>
+		<th>Time of Action:</th>
+		<th>Period:</th>
+	</tr>
+<?php
+}
+foreach ($result as $row) {	?>
 	<?php echo "<tr>";	?>
 	
 		<?php echo "<td>" . $row["ID"] . "</td>";	?>
 		
-		<?php echo "<td>" . ($row["CHECKIN"] === "1" ? "Arrival" : "Departure") . "</td>";	?>
+		<?php if($fromWhere === "LOG") {echo "<td>" . ($row["CHECKIN"] === "1" ? "Arrival" : "Departure") . "</td>";}	?>
 		
 		<?php echo "<td>" . $row["STUDENT_ID"] . "</td>"	;	?>
 		
@@ -224,7 +252,7 @@ $result = $stmt->fetchAll();
 		
 		<?php echo "<td>" . $row["PERIOD"] . "</td>";	?>
 		
-		<?php echo "<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>";	?>
+		<?php if($fromWhere === "LOG") {echo "<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>";}	?>
 		
 	<?php echo "</tr>";	?>
 	
@@ -266,15 +294,15 @@ if($num_pages != 0) { 											?>
 </div>
 <div id="options">
 	<form id="filter">
+		Student ID:
+		<input id="student_id" 	class="text" 		type="text" 		name="student_id" 	placeholder="Seven digit Student ID"><br>
+
 		Student name:
 		<input id="name"		class="text" 		type="text" 		name="name" 		placeholder="Part of name or whole name"><br>
 		
 		Student grade:
 		<input id="grade" 		class="text" 		type="number" 		name="grade" 		placeholder="Any value 9-12" min="9" max="12"><br>
-		
-		Student ID:
-		<input id="student_id" 	class="text" 		type="text" 		name="student_id" 	placeholder="Seven digit Student ID"><br>
-		
+				
 		Period:
 		<input id="period" 		class="text" 		type="number" 		name="period" 		placeholder="Any value 1-11" min="1" max="11"><br>
 		
@@ -284,11 +312,9 @@ if($num_pages != 0) { 											?>
 		End date (leave blank for current date):<br>
 		<input id="date_end" 	class="text"		type="date" 		name="date_end" 	placeholder="Date: YYYY-MM-DD"><br>
 		
-		<div class="center">
-			Sort type:<br>
-			<label><input id="sort" 				type="radio" 		name="sort" 	value="new-old" checked="yes"> New on top</label><br> 
-			<label><input id="sort" 				type="radio"		name="sort" 	value="old-new"> Old on top</label>
-		</div>
+		Extra options:<br>
+		<label><input id="current" 				type="checkbox"		name="view" 	value="current"> View only current students</label><br> 
+		<label><input id="sort_old"				type="checkbox"		name="sort" 	value="old-new"> Old on top</label>
 		
 		<span><?php echo $sortError;?></span>
 		
@@ -296,9 +322,6 @@ if($num_pages != 0) { 											?>
 	</form>
 </div>
 <div id="logout">
-	<form action="/view.php" method="get" style="padding: 0">
-		<button type="submit" name="view" value="current">Students in Room</button>
-	</form>
 	<form action="/logout.php" method="get" style="padding: 0">
 		<input type="submit" value=" Logout ">
 	</form>
