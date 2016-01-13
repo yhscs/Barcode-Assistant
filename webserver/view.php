@@ -35,16 +35,12 @@ $stmt->execute(array('name' => $_SESSION['login_user'])); #based on the current 
 $data = $stmt->fetchAll();
 
 foreach($data as $row) {		
-	if(($thatMuchTime = strtotime($date) - strtotime($row["TIME"])) > 4*60*60){ #If the current student has been away for more than 4 hours then we'll consider them gone.
+	if(($thatMuchTime = strtotime(date("Y-m-d H:i:s")) - strtotime($row["TIME"])) > 4*60*60){ #If the current student has been away for more than 4 hours then we'll consider them gone.
 		$fourHoursFromThen = strtotime($row["TIME"]) + 4*60*60;
 		$realTime = date("Y-m-d H:i:s", $fourHoursFromThen);
 		
-		$index = $row["ID"];
-		$stmt = $conn->prepare("DELETE FROM LOG_INSIDE WHERE ID = :index"); #Select the id of the students that is already signed in and delete it.
-		$stmt->execute(array('index' => $index)); #based on the index.
-		
 		$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
-		$stmt->execute(array('username' => $_POST[Index::ROOM],
+		$stmt->execute(array('username' => $_SESSION['login_user'],
 						'checkin' => "1",
 						'stud_id' => $row['STUDENT_ID'],
 						'stud_name' => $row['STUDENT_NAME'],
@@ -52,6 +48,10 @@ foreach($data as $row) {
 						'stud_time' => $realTime,
 						'period' => $row['PERIOD'],
 						'auto' => "1")); #The calls here should ALWAYS be automatic.
+						
+		$index = $row["ID"];
+		$stmt = $conn->prepare("DELETE FROM LOG_INSIDE WHERE ID = :index"); #Select the id of the students that is already signed in and delete it.
+		$stmt->execute(array('index' => $index)); #based on the index.
 	}
 }
 
