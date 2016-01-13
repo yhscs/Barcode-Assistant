@@ -29,7 +29,7 @@ public class Network {
 	 * @param id String of the student ID.
 	 * @param time Time string (In PHP/SQL format!!) of the time the data was sampled.
 	 * @param automatic Boolean that is true if the student is being logged out automatically. 
-	 * @return An int SUCCESS or FAILURE.
+	 * @return An int FAILURE,  CHECKIN, or CHECKOUT
 	 */
 	public static int putData(String room, String roomHash, String id) throws Exception {
 		
@@ -45,12 +45,12 @@ public class Network {
 	
 	/**
 	 * 
-	 * @param c
-	 * @param room
-	 * @param roomPassword
-	 * @param admin
-	 * @param adminPassword
-	 * @return
+	 * @param c The window an error will pop up on.
+	 * @param room The room string.
+	 * @param roomPassword The password array (as chars)
+	 * @param admin The admin username string
+	 * @param adminPassword The admin password array.
+	 * @return An int SUCCESS or FAILURE.
 	 */
 	public static int createDatabase(Component c, String room, char[] roomPassword, String admin, char[] adminPassword) {
 		String userSalt;
@@ -89,11 +89,10 @@ public class Network {
 	
 	/**
 	 * 
-	 * @param c
-	 * @param room
-	 * @param password
-	 * @param h
-	 * @return
+	 * @param c The window an error will pop up on.
+	 * @param room The room string.
+	 * @param password The password array (as chars)
+	 * @return An object HashAndReturnn (returns hash or an int failure basically)
 	 */
 	public static HashAndReturn testLogin(Component c, String room, char[] password) {
 		String userSalt = "";
@@ -120,9 +119,9 @@ public class Network {
 	
 	/**
 	 * 
-	 * @param c
-	 * @param e
-	 * @param internal
+	 * @param c The window an error will pop up on.
+	 * @param e The exception
+	 * @param internal True if the error is a programming error.
 	 */
 	private static void throwError(Component c, Exception e, boolean internal){
 		if(internal) {
@@ -140,10 +139,10 @@ public class Network {
 
 	/**
 	 * 
-	 * @param c
-	 * @param keys
-	 * @param data
-	 * @return
+	 * @param c The window an error will pop up on.
+	 * @param keys An array of keys to send to php
+	 * @param data Their corresponding data in the same order and length as keys.
+	 * @return An int SUCCESS or FAILURE.
 	 */
 	private static int calculateSuccess(Component c, ArrayList<String> keys, ArrayList<String> data) {
 		URLConnection con;
@@ -182,9 +181,6 @@ public class Network {
 			return CHECKOUT;
 		} else if (ret.size() > 0){
 			Exception e = new Exception((ret.get(0).equals("<br />") ? "There was a PHP error. Get a programmer to fix it." : ret.get(0)));
-			for(String s : ret) {
-				System.out.println("Server said: " + s);
-			}
 			throw e;
 		} else {
 			throw new IndexOutOfBoundsException("The server gave an empty reply!");

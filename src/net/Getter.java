@@ -23,11 +23,6 @@ public class Getter {
 		} catch (IOException e) {
 			throw e;
 		}
-		if(result.size() > 0 && result.get(0).equals("<br />")) {
-			for(String str : result) {
-				System.out.println("GOT: " + str);
-			}
-		}
 		return result;
 	}
 

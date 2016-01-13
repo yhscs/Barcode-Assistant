@@ -65,6 +65,27 @@ if (isset($_GET['period'])) {
 	}
 } 
 
+#For the time.
+$startDateIsSet=false;
+if (isset($_GET['start_date'])) {
+	if(!($_GET['start_date'] === "" || $_GET['start_date'] == null)) {
+		$startDateIsSet="SET";
+	}
+	if($_GET['start_date'] === "") {
+		$startDateIsSet="BEGINNING";
+	}
+} 
+
+$endDateIsSet=false;
+if (isset($_GET['end_date'])) {
+	if(!($_GET['end_date'] === "" || $_GET['end_date'] == null)) {
+		$endDateIsSet="SET";
+	}
+	if($_GET['end_date'] === "") {
+		$endDateIsSet="END";
+	}
+} 
+
 #How many results per page
 $per_page = 20;
 
@@ -257,10 +278,10 @@ if($num_pages != 0) { 											?>
 		Period:
 		<input id="period" 		class="text" 		type="number" 		name="period" 		placeholder="Any value 1-11" min="1" max="11"><br>
 		
-		Start date:<br>
+		Start date (leave blank for beginning of date):<br>
 		<input id="date_start" 	class="text"		type="date" 		name="date_start" 	placeholder="Date: YYYY-MM-DD"><br>
 		
-		End date:<br>
+		End date (leave blank for current date):<br>
 		<input id="date_end" 	class="text"		type="date" 		name="date_end" 	placeholder="Date: YYYY-MM-DD"><br>
 		
 		<div class="center">

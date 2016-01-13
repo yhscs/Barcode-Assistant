@@ -9,7 +9,7 @@ public class Main {
 		Setup s = new Setup();
 		while(!s.hasReturned()) {
 		    try {
-		        Thread.sleep(50);
+		        Thread.sleep(100);
 		    }catch (Exception e){
 		        e.printStackTrace();
 		    }

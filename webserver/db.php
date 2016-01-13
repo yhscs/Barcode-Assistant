@@ -1,8 +1,4 @@
 <?php
-
-function autoLogout() {
-	//TODO: AutoLogout.
-}
 function getPeriod($time) {
 	if($time < date('H:i:s',strtotime("7:25:00"))) {
 		return "Before school";
@@ -106,9 +102,6 @@ if (!empty($_POST)) {
 					die();
 				}
 				
-				//If we are "in" try and run the auto logout feature.
-				autoLogout();
-				
 				$stmt = $conn->prepare("SELECT STUDENT_GRADE, STUDENT_NAME, STUDENT_ID FROM STUDENT$ WHERE STUDENT_ID = :id LIMIT 1"); #Select the student name, grade, and id from the students table.
 				$stmt->execute(array('id' => $_POST[StudentData::ID])); #based on the id (that's all the info we have, we need the other pieces).
 				$row = $stmt->fetch();
@@ -125,6 +118,11 @@ if (!empty($_POST)) {
 				date_default_timezone_set('America/Chicago');
 				$date = date('Y-m-d H:i:s');
 				$period = getPeriod(date('H:i:s'));
+				
+				if($period === "Before school" || $period === "After school") {
+					echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
+					die();
+				}
 				
 				$stmt = $conn->prepare("SELECT ID, ROOM, STUDENT_ID, TIME FROM LOG_INSIDE WHERE STUDENT_ID = :id AND ROOM = :name LIMIT 1"); #Select the index, room, student id, and last logged time from the people who are currently in that room.
 				$stmt->execute(array('id' => $_POST[StudentData::ID],

@@ -23,10 +23,6 @@ public class Keyboard implements KeyListener {
     public void keyTyped(KeyEvent e) {
         que += e.getKeyChar();
         if(que.length() > 1 && que.substring(que.length()-1, que.length()).equals("\n")) {
-       		scanner.setHeaderText("Loading...");
-        	scanner.setSubtitleText("Give me a second...");
-    		scanner.setImage("/pictures/wait.png");	
-    		scanner.setImage("/pictures/wait.png");	
         	que = que.substring(0,que.length() - 1);
         	System.out.print(que);
         	if(que.length() == 7) {
@@ -47,7 +43,7 @@ public class Keyboard implements KeyListener {
 	        		} catch (Exception ohno) {
 	        			System.out.println("Something happened!");
 	    				scanner.setImage("/pictures/no.png");	
-	        			scanner.setHeaderText("Oh no! Something broke :(");
+	        			scanner.setHeaderText("Error:");
 	        			scanner.setSubtitleText(ohno.getMessage());
 	        		}
         		} catch (NumberFormatException err) {
