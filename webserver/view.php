@@ -41,7 +41,7 @@ foreach($data as $row) {
 		
 		$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
 		$stmt->execute(array('username' => $_SESSION['login_user'],
-						'checkin' => "1",
+						'checkin' => "0",
 						'stud_id' => $row['STUDENT_ID'],
 						'stud_name' => $row['STUDENT_NAME'],
 						'stud_grade' => $row['STUDENT_GRADE'],
