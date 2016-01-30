@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `USERS` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 ```
 
-When that is done, simply copy the web-server files to the root of your server and the root files to somewhere outside of your web folder You might need to change the times in the getPeriod function inside db.php for the school's bell schedual. 
+When that is done, simply copy the web-server files to the root of your server and the root files to somewhere outside of your web folder. You might need to change the times in the getPeriod function inside db.php for the school's bell schedual. 
 
 ### Notes: 
 * If you would like to host it yourself, the JS Crypto library is hosted here: https://code.google.com/p/crypto-js/
