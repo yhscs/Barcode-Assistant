@@ -133,22 +133,27 @@ if (!empty($_POST)) {
 				
 				if($rowCount == 1) {
 					if(($thatMuchTime = strtotime($date) - strtotime($row["TIME"])) > 4*60*60){ #If the current student has been away for more than 4 hours then we'll consider them gone.
-						$fourHoursFromThen = strtotime($row["TIME"]) + 4*60*60;
-						$realTime = date("Y-m-d H:i:s", $fourHoursFromThen);
+#						The code here was used to show when a student was signed out automatically. Turned out to be quite spammy. Has been removed.
+
+#						$fourHoursFromThen = strtotime($row["TIME"]) + 4*60*60;
+#						$realTime = date("Y-m-d H:i:s", $fourHoursFromThen);
+
+#						$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, ) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
+#						$stmt->execute(array('username' => $_POST[Index::ROOM],
+#										'checkin' => "0",
+#										'stud_id' => $_POST[StudentData::ID],
+#										'stud_name' => $student_name,
+#										'stud_grade' => $student_grade,
+#										'stud_time' => $realTime,
+#										'period' => $period,
+#										'auto' => "1")); #The calls here should ALWAYS be automatic.
+
+#						Here would be the place to preform an action when the student has been gone for a while and tries to scan their id again.
 						
 						$index = $row["ID"];
 						$stmt = $conn->prepare("DELETE FROM LOG_INSIDE WHERE ID = :index"); #Select the id of the students that is already signed in and delete it.
 						$stmt->execute(array('index' => $index)); #based on the index.
-						
-						$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
-						$stmt->execute(array('username' => $_POST[Index::ROOM],
-										'checkin' => "0",
-										'stud_id' => $_POST[StudentData::ID],
-										'stud_name' => $student_name,
-										'stud_grade' => $student_grade,
-										'stud_time' => $realTime,
-										'period' => $period,
-										'auto' => "1")); #The calls here should ALWAYS be automatic.
+
 						$rowCount = 0; #Removed, preform check as normal.
 					}
 				}
@@ -174,15 +179,14 @@ if (!empty($_POST)) {
 					$stmt->execute(array('index' => $index)); #based on the index.
 				}
 				
-				$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
+				$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period)");
 				$stmt->execute(array('username' => $_POST[Index::ROOM],
 									 'checkin' => $checkin,
 									 'stud_id' => $_POST[StudentData::ID],
 									 'stud_name' => $student_name,
 									 'stud_grade' => $student_grade,
 									 'stud_time' => $date,
-									 'period' => $period,
-									 'auto' => "0")); #The calls here should never be automatic.
+									 'period' => $period));
 				if ($checkin === 0) {
 					echo "CHECKOUT" . "\n";
 				} else {

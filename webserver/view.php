@@ -36,18 +36,20 @@ $data = $stmt->fetchAll();
 
 foreach($data as $row) {		
 	if(($thatMuchTime = strtotime(date("Y-m-d H:i:s")) - strtotime($row["TIME"])) > 4*60*60){ #If the current student has been away for more than 4 hours then we'll consider them gone.
-		$fourHoursFromThen = strtotime($row["TIME"]) + 4*60*60;
-		$realTime = date("Y-m-d H:i:s", $fourHoursFromThen);
+#		The code here was used to show when a student was signed out automatically. Turned out to be quite spammy. Has been removed.
+	
+#		$fourHoursFromThen = strtotime($row["TIME"]) + 4*60*60;
+#		$realTime = date("Y-m-d H:i:s", $fourHoursFromThen);
 		
-		$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
-		$stmt->execute(array('username' => $_SESSION['login_user'],
-						'checkin' => "0",
-						'stud_id' => $row['STUDENT_ID'],
-						'stud_name' => $row['STUDENT_NAME'],
-						'stud_grade' => $row['STUDENT_GRADE'],
-						'stud_time' => $realTime,
-						'period' => $row['PERIOD'],
-						'auto' => "1")); #The calls here should ALWAYS be automatic.
+#		$stmt = $conn->prepare("INSERT INTO LOG (ID, ROOM, CHECKIN, STUDENT_ID, STUDENT_NAME, STUDENT_GRADE, TIME, PERIOD, AUTO) VALUES (NULL, :username, :checkin, :stud_id, :stud_name, :stud_grade, :stud_time, :period, :auto)");
+#		$stmt->execute(array('username' => $_SESSION['login_user'],
+#						'checkin' => "0",
+#						'stud_id' => $row['STUDENT_ID'],
+#						'stud_name' => $row['STUDENT_NAME'],
+#						'stud_grade' => $row['STUDENT_GRADE'],
+#						'stud_time' => $realTime,
+#						'period' => $row['PERIOD'],
+#						'auto' => "1")); #The calls here should ALWAYS be automatic.
 						
 		$index = $row["ID"];
 		$stmt = $conn->prepare("DELETE FROM LOG_INSIDE WHERE ID = :index"); #Select the id of the students that is already signed in and delete it.
@@ -337,7 +339,6 @@ $result = $stmt->fetchAll();
 		<th>Student Grade:</th>
 		<th>Time of Action:</th>
 		<th>Period:</th>
-		<th>Automatic Sign Out:</th>
 	</tr>
 <?php } else { ?>
 	<tr>
@@ -365,8 +366,6 @@ foreach ($result as $row) {	#Yes, this looks funky. But it makes the output look
 		<?php echo "<td>" . $row["TIME"] . "</td>";	?>
 		
 		<?php echo "<td>" . $row["PERIOD"] . "</td>"; ?>
-		
-		<?php if($fromWhere === "LOG") {echo "<td>" . ($row["AUTO"] === "1" ? "Yes" : "No") . "</td>";} ?>
 		
 	<?php echo "</tr>"; ?>
 	
@@ -448,6 +447,8 @@ if(!($filterMessages === "ACTIVE FILTERS:<br>")) { ?>
 	</form>
 </div>
 <h3 class="center"><?php echo "For security purposes, you have " . gmdate("i:s" , (10*60) - (strtotime(date("Y-m-d H:i:s")) - strtotime($_SESSION['timestamp']))) . " minutes left in your session."; ?></h3><br>
+<h3 class="center">Update:</h3>
+<p class="center">"Automatic sign outs" are no longer shown, but students will still be automatically signed out. This means that after four hours a student will be considered "gone" but the program will not spam the database with "Automatic sign outs". This makes it easier for you to view the table and reduces the total amount of entries in the table.</p><br>
 </div>
 </body>
 </html>
