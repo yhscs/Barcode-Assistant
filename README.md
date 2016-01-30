@@ -68,3 +68,5 @@ When that is done, simply copy the web-server files to the root of your server a
 * For the most part, the log viewers are dynamic and should be viewable even on mobile.
 * Credits can be found in the source code where necessary. 
 * You might need to re-program the PHP code to create the first user accoutnt. 
+* This project was for a computer security class. 
+* This project is actually being used at my school :thumbsup:
