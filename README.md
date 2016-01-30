@@ -67,3 +67,4 @@ When that is done, simply copy the web-server files to the root of your server a
 * In order to create new accounts on the fly, an administrator account can be created by changing the "IS_ADMIN" value in the SQL database. These users can (currently) only create other standard users to prevent someone from creating many users on a server.
 * For the most part, the log viewers are dynamic and should be viewable even on mobile.
 * Credits can be found in the source code where necessary. 
+* You might need to re-program the PHP code to create the first user accoutnt. 
