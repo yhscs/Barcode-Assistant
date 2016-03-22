@@ -1,4 +1,73 @@
 <?php
+$yhs = array(
+	"passing"=>"-5 minutes",
+	"before"=>"7:25:00",
+	"1"=>"8:17:00", #Periods should end at the beginning of the next period.
+	"2"=>"9:09:00", #The end of the period minus the key "passing" is defined
+	"3"=>"10:01:00",#as the passing period.
+	"4"=>"10:35:00",
+	"5"=>"11:03:00",
+	"6"=>"11:31:00",
+	"7"=>"11:59:00",
+	"8"=>"12:27:00",
+	"9"=>"12:56:00",
+	"10"=>"13:48:00",
+	"11"=>"14:35:00"); #Anything beyond this will be considered after school.
+	
+$yhsa = array(
+	"passing"=>"-4 minutes",
+	"before"=>"7:25:00",
+	"1"=>"8:12:00",
+	"2"=>"9:03:00",
+	"3"=>"9:54:00",
+	"4"=>"10:28:00",
+	"5"=>"10:56:00",
+	"6"=>"11:24:00",
+	"7"=>"11:52:00",
+	"8"=>"12:20:00",
+	"9"=>"12:48:00",
+	"10"=>"13:39:00",
+	"11"=>"24:30:00");
+	
+$yms = array(
+	"passing"=>"-3 minutes",
+	"before"=>"7:30:00",
+	"1"=>"8:15:00",
+	"2"=>"9:00:00",
+	"3"=>"9:45:00",
+	"4"=>"10:30:00",
+	"5/6/7"=>"12:18:00",
+	"8"=>"13:03:00",
+	"9"=>"13:48:00",
+	"10"=>"24:30:00");
+
+function getPeriodReal($school, $time) { #since PHP has such shitty naming conventions, I do too!
+	$index = 0;
+	if($time < date('H:i:s',strtotime($school["before"]))) {
+		return "Before school";
+	}
+	foreach($school as $x => $x_value) {
+		if($index++ < 2) {
+			continue;
+		}
+		if($index === (count($school))) {
+			if ($time < date('H:i:s',strtotime($school[$x]))) {
+				return $x;
+			} else {
+				return "After school";
+			}
+		} else {
+			if ($time < ($localPeriod = date('H:i:s',strtotime($x_value)))) {
+				if($time < date('H:i:s',strtotime($school["passing"], strtotime($localPeriod)))) {
+					return $x;
+				} else {
+					return "$x (Passing period)";
+				}
+			}
+		}
+	}
+}
+
 function getPeriod($time) {
 	if($time < date('H:i:s',strtotime("7:25:00"))) {
 		return "Before school";
