@@ -21,7 +21,16 @@ public class Keyboard implements KeyListener {
 	
     /** Handle the key typed event from the text field. */
     public void keyTyped(KeyEvent e) {
-        que += e.getKeyChar();
+    	if(e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+    		if(que.length() > 0) {
+    			que = que.substring(0,que.length() - 1);
+    		}
+    	} else {
+    		if(que.length() < 7 || e.getKeyChar() == '\n') {
+    			que += e.getKeyChar();
+    		}
+    	}
+    	scanner.setSubtitleText(que);
         if(que.length() > 1 && que.substring(que.length()-1, que.length()).equals("\n")) {
         	que = que.substring(0,que.length() - 1);
         	System.out.print(que);
@@ -69,5 +78,9 @@ public class Keyboard implements KeyListener {
     /** Handle the key-released event from the text field. */
     public void keyReleased(KeyEvent e) {
     }
+
+	public void clearQue() {
+		que = "";
+	}
 }
 

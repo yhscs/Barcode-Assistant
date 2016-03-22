@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -49,6 +50,15 @@ public class Setup extends JDialog{
 		super(null, "Log in", Dialog.ModalityType.APPLICATION_MODAL);
 		this.setPreferredSize(new Dimension(260,480));
 		this.setSize(new Dimension(260,480));
+        this.addWindowListener(new WindowListener() {
+			public void windowOpened(WindowEvent e) {}
+			public void windowClosing(WindowEvent e) {System.exit(0);}
+			public void windowClosed(WindowEvent e) {System.exit(0);}
+			public void windowIconified(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowActivated(WindowEvent e) {}
+			public void windowDeactivated(WindowEvent e) {}
+        });
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addComponentsToPane(this.getContentPane());
         this.pack();

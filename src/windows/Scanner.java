@@ -50,7 +50,8 @@ public class Scanner extends JFrame{
         addComponentsToPane(this.getContentPane());
         this.pack();
         this.setVisible(true);
-        this.addKeyListener(new Keyboard(this, roomName, hash));
+        final Keyboard k = new Keyboard(this, roomName, hash);
+        this.addKeyListener(k);
         this.counter = System.currentTimeMillis();
         new Thread() {
         	public void run() {
@@ -60,6 +61,7 @@ public class Scanner extends JFrame{
         				setImage(normalLocation);	
         				title.setText(normalTitle);
         				subtext.setText(normalSubtext);	
+        				k.clearQue();
         			}
         			try {
 						Thread.sleep(100L);
