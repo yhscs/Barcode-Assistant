@@ -183,7 +183,7 @@ if (!empty($_POST)) {
 				}
 				date_default_timezone_set('America/Chicago');
 				$date = date('Y-m-d H:i:s');
-				$period = getPeriodReal(date('H:i:s'), $school);
+				$period = getPeriodReal($school, date('H:i:s'));
 				if($period === "Before school" || $period === "After school") {
 					echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
 					die();
