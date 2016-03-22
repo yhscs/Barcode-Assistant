@@ -52,7 +52,7 @@ public class Network {
 	 * @param adminPassword The admin password array.
 	 * @return An int SUCCESS or FAILURE.
 	 */
-	public static int createDatabase(Component c, String room, char[] roomPassword, String admin, char[] adminPassword) {
+	public static int createDatabase(Component c, String room, char[] roomPassword, String admin, char[] adminPassword, String school) {
 		String userSalt;
 		try {
 			userSalt = Constants.getSalt();
@@ -79,6 +79,7 @@ public class Network {
 		keys.add(Indexes.ROOM_SALT);					data.add(userSalt);
 		keys.add(Indexes.ADMIN);						data.add(admin);
 		keys.add(Indexes.ADMIN_PASSWORD);				data.add(adminHash);
+		keys.add(Indexes.SCHOOL);						data.add(school);
 		//--THAT IS ALL--
 		
 		

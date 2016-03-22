@@ -11,4 +11,5 @@ public class Indexes {
 	public static final String ADMIN="ADMIN";
 	public static final String ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
 	public static final String USER="USER";
+	public static final String SCHOOL="SCHOOL";
 }

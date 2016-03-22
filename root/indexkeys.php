@@ -7,6 +7,7 @@ class Index {
 	const ADMIN="ADMIN";
 	const ADMIN_PASSWORD="ADMINISTRATOR_PASSWORD";
 	const USER="USER";
+	const SCHOOL="SCHOOL";
 }
 
 class StudentData {

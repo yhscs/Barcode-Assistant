@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +34,7 @@ public class Setup extends JDialog{
 	private final JPasswordField roomPassword = new JPasswordField(20);
 	private final JTextField adminName = new JTextField(20);
 	private final JPasswordField adminPassword = new JPasswordField(20);
+	private final JComboBox<String> school = new JComboBox<String>();
 	private final String createRoomAlt = "Connect to Existing Room";
 	private final String createRoomDef = "Create Room";
 	private final JButton createRoom = new JButton(createRoomDef);
@@ -45,8 +47,8 @@ public class Setup extends JDialog{
 	
 	public Setup() {
 		super(null, "Log in", Dialog.ModalityType.APPLICATION_MODAL);
-		this.setPreferredSize(new Dimension(260,460));
-		this.setSize(new Dimension(260,460));
+		this.setPreferredSize(new Dimension(260,480));
+		this.setSize(new Dimension(260,480));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addComponentsToPane(this.getContentPane());
         this.pack();
@@ -142,6 +144,19 @@ public class Setup extends JDialog{
 		adminArea.add(borderPanel);
 		//endregion
 		
+		//region Selectable chooser for school
+		title = BorderFactory.createTitledBorder("School:");
+		school.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
+		school.setName(Indexes.SCHOOL);
+		school.addItem("YHS");
+		school.addItem("YHSA");
+		school.addItem("YMS");
+		borderPanel = new JPanel();
+		borderPanel.setBorder(title);
+		borderPanel.add(school);
+		adminArea.add(borderPanel);
+		//endregion
+		
 		//region Creates a border around the login area and sets min/max height
 		title = BorderFactory.createTitledBorder("Administrator information:");
 		adminArea.setBorder(title);
@@ -188,7 +203,7 @@ public class Setup extends JDialog{
 			boolean allFieldsOK = field1 && field2 && field3 && field4;
 			if(allFieldsOK) {
 				System.out.println("Attempting to create the room " + roomName.getText() + ".");
-				if(Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminName.getText(), adminPassword.getPassword()) == Network.SUCCESS) {
+				if(Network.createDatabase(this, roomName.getText(), roomPassword.getPassword(), adminName.getText(), adminPassword.getPassword(), (String) school.getSelectedItem()) == Network.SUCCESS) {
 					JOptionPane.showMessageDialog(this,
 						    "Created the room succesfully! You can now use the new account to log into the attendance system.",
 						    "Success!",
@@ -239,12 +254,14 @@ public class Setup extends JDialog{
 			roomPassword.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
 			roomName.setBorder(BorderFactory.createLineBorder(new Color(122,138,153)));
 			createRoom.setText(createRoomAlt);
+			school.setEnabled(false);
 		} else {
 			adminPassword.setEnabled(true);
 			adminPassword.setBackground(Color.WHITE);
 			adminName.setEnabled(true);
 			adminName.setBackground(Color.WHITE);
 			createRoom.setText(createRoomDef);
+			school.setEnabled(true);
 		}
 	}
 

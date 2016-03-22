@@ -159,16 +159,7 @@ if (!empty($_POST)) {
 					echo "...\n";
 					die();
 				}
-				#Check school hours first!
-				date_default_timezone_set('America/Chicago');
-				$date = date('Y-m-d H:i:s');
-				$period = getPeriod(date('H:i:s'));
-				if($period === "Before school" || $period === "After school") {
-					echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
-					die();
-				}
-				
-				$stmt = $conn->prepare("SELECT USERNAME, PASSWORD, ISADMIN FROM USERS WHERE USERNAME = :name LIMIT 1"); #Select usernames, passwords, and account
+				$stmt = $conn->prepare("SELECT USERNAME, PASSWORD, ISADMIN, SCHOOL FROM USERS WHERE USERNAME = :name LIMIT 1"); #Select usernames, passwords, and account
 				$stmt->execute(array('name' => $_POST[Index::ROOM])); #based on the room
 				$row = $stmt->fetch();
 				if($row["ISADMIN"] === "1") { #If the account is an admin
@@ -177,6 +168,24 @@ if (!empty($_POST)) {
 				}
 				if($row["PASSWORD"] !== $_POST[Index::ROOM_PASSWORD]) { #if the password hash is not the stored hash
 					echo "The username or password is incorrect!"; #Deny it.
+					die();
+				}
+				
+				$school = $yhs; #fallback
+				if($row["SCHOOL"] === "0") { #switch to correct school.
+					$school = $yhs;
+				}
+				if($row["SCHOOL"] === "1") {
+					$school = $yhsa;
+				}
+				if($row["SCHOOL"] === "2") {
+					$school = $yms;
+				}
+				date_default_timezone_set('America/Chicago');
+				$date = date('Y-m-d H:i:s');
+				$period = getPeriodReal(date('H:i:s'), $school);
+				if($period === "Before school" || $period === "After school") {
+					echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
 					die();
 				}
 				
@@ -290,7 +299,8 @@ if (!empty($_POST)) {
 				  && array_key_exists(Index::ROOM_PASSWORD,$_POST)
 				  && array_key_exists(Index::ROOM_SALT,$_POST)
 				  && array_key_exists(Index::ADMIN,$_POST)
-				  && array_key_exists(Index::ADMIN_PASSWORD,$_POST))) {
+				  && array_key_exists(Index::ADMIN_PASSWORD,$_POST)
+				  && array_key_exists(Index::SCHOOL,$_POST))) {
 					echo "...";
 					die();
 				}
@@ -314,10 +324,11 @@ if (!empty($_POST)) {
 					die();
 				}
 				#Account does not exist, account is an admin, and passwords match!
-				$stmt = $conn->prepare("INSERT INTO USERS (USERNAME,PASSWORD,SALT,ISADMIN) VALUES (:username, :password, :salt, '0')");
+				$stmt = $conn->prepare("INSERT INTO USERS (USERNAME,PASSWORD,SALT,ISADMIN,SCHOOL) VALUES (:username, :password, :salt, '0', :school)");
 				$stmt->execute(array('username' => $_POST[Index::ROOM],
 									 'password' => $_POST[Index::ROOM_PASSWORD],
-									 'salt' => $_POST[Index::ROOM_SALT]));
+									 'salt' => $_POST[Index::ROOM_SALT],
+									 'school' => $_POST[Index::SCHOOL]));
 				echo "OK" . "\n";
 				echo "User account " . $_POST[Index::ROOM] . " created successfully";
 				break;
