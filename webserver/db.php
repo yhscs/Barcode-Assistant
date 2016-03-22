@@ -172,13 +172,13 @@ if (!empty($_POST)) {
 				}
 				
 				$school = $yhs; #fallback
-				if($row["SCHOOL"] === "0") { #switch to correct school.
+				if($row["SCHOOL"] === "YHS") { #switch to correct school.
 					$school = $yhs;
 				}
-				if($row["SCHOOL"] === "1") {
+				if($row["SCHOOL"] === "YHSA") {
 					$school = $yhsa;
 				}
-				if($row["SCHOOL"] === "2") {
+				if($row["SCHOOL"] === "YMS") {
 					$school = $yms;
 				}
 				date_default_timezone_set('America/Chicago');
