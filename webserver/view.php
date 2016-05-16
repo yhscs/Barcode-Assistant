@@ -448,7 +448,7 @@ if(!($filterMessages === "ACTIVE FILTERS:<br>")) { ?>
 </div>
 <h3 class="center"><?php echo "For security purposes, you have " . gmdate("i:s" , (10*60) - (strtotime(date("Y-m-d H:i:s")) - strtotime($_SESSION['timestamp']))) . " minutes left in your session."; ?></h3><br>
 <h3 class="center">Update:</h3>
-<p class="center">"Automatic sign outs" are no longer shown, but students will still be automatically signed out. This means that after four hours a student will be considered "gone" but the program will not spam the database with "Automatic sign outs". This makes it easier for you to view the table and reduces the total amount of entries in the table.</p><br>
+<p class="center">We are back online!</p><br>
 </div>
 </body>
 </html>

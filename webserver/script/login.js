@@ -8,15 +8,16 @@ $('.login').on('submit', function () {
 		data: {REQUEST: "SALTY_MC_SALTER", USER: room},
 		async: false
 	}).responseText;
-	var sha512 = CryptoJS.algo.SHA512.create();
+	var shaObj = new jsSHA("SHA-512", "TEXT");
+	
 	if(!(response.split("\n")[0] == "OK")) {
 		document.getElementById("error").innerHTML = response.split("\n")[0];
 		return false;
 	}
-	sha512.update(response.split("\n")[2]);
-	sha512.update(password);
+	shaObj.update(response.split("\n")[2]);
+	shaObj.update(password);
 	
-	var hash = sha512.finalize();
+	var hash = shaObj.getHash("HEX");
 	
 	post("http://attendance.yhscs.us/index.php", {ROOM: room, ROOM_PASSWORD: hash})
     return false;
