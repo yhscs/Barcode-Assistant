@@ -1,6 +1,6 @@
 <?php
 #INCLUDE AND START SESSION
-include '/home/aj4057/config.php'; #Define $servername $username $password $dbname and $configready here.
+include '../config.php'; #Define $servername $username $password $dbname and $configready here.
 session_start();
 if(!isset($_SESSION['login_user']) || !isset($_SESSION['timestamp']) || !isset($_SESSION['valid'])) { 
 	header("location: logout.php");

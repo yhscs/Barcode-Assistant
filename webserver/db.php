@@ -138,8 +138,8 @@ function getPeriod($time) {
 	}
 }
 
-include '/home/aj4057/indexkeys.php'; //Index keys that are used. For example, Index::REQUEST is defined here.
-include '/home/aj4057/config.php'; //Define $servername $username $password $dbname and $configready here.
+include '../indexkeys.php'; //Index keys that are used. For example, Index::REQUEST is defined here.
+include '../config.php'; //Define $servername $username $password $dbname and $configready here.
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -184,10 +184,12 @@ if (!empty($_POST)) {
 				date_default_timezone_set('America/Chicago');
 				$date = date('Y-m-d H:i:s');
 				$period = getPeriodReal($school, date('H:i:s'));
+				/* Allow check ins before or after school
 				if($period === "Before school" || $period === "After school") {
 					echo "There is no need, it isn't during school hours!" . "\n"; #tell an error.
 					die();
 				}
+				*/
 				
 				$stmt = $conn->prepare("SELECT STUDENT_GRADE, STUDENT_NAME, STUDENT_ID FROM STUDENT$ WHERE STUDENT_ID = :id LIMIT 1"); #Select the student name, grade, and id from the students table.
 				$stmt->execute(array('id' => $_POST[StudentData::ID])); #based on the id (that's all the info we have, we need the other pieces).

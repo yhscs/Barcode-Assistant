@@ -39,7 +39,7 @@ public class Scanner extends JFrame{
 		super("Scanner Utility");
 		this.getContentPane().setBackground( Color.BLACK);
         this.roomName = roomName.substring(0, 1).toUpperCase() + roomName.substring(1);
-        this.normalTitle = "<html><center>" + this.roomName + " quick attendance system.</center></html>";
+        this.normalTitle = "<html><center>" + this.roomName + " quick attendance system designed and developed by AJ Walter, YHS Class of 2017.</center></html>";
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int xSize = ((int) tk.getScreenSize().getWidth());
 		int ySize = ((int) tk.getScreenSize().getHeight());

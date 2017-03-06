@@ -1,6 +1,6 @@
 <?php
-include '/home/aj4057/config.php'; #Define $servername $username $password $dbname and $configready here.
-include '/home/aj4057/indexkeys.php'; #Index keys that are used. For example, Index::REQUEST is defined here.
+include '../config.php'; #Define $servername $username $password $dbname and $configready here.
+include '../indexkeys.php'; #Index keys that are used. For example, Index::REQUEST is defined here.
 
 do {
 session_start(); #Starting Session
@@ -68,6 +68,7 @@ if(isset($_SESSION['login_user'])){
 				<div class="padding"><input type="submit" value=" Login "></div>
 				<span id="error"><?php echo $error?></span>
 			</form>
+             <p>Designed and developed by AJ Walter,<br> Class of 2017 in <a href="http://yhscs.us/advanced/computerSecurity.php">Computer Security</a>.</p>
 		</div>
 	</div>
 </body>
