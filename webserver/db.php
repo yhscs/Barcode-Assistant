@@ -2,32 +2,32 @@
 $yhs = array(
 	"passing"=>"-5 minutes",
 	"before"=>"7:25:00",
-	"1"=>"8:17:00", #Periods should end at the beginning of the next period.
-	"2"=>"9:09:00", #The end of the period minus the key "passing" is defined
-	"3"=>"10:01:00",#as the passing period.
-	"4"=>"10:35:00",
-	"5"=>"11:03:00",
-	"6"=>"11:31:00",
-	"7"=>"11:59:00",
-	"8"=>"12:27:00",
-	"9"=>"12:56:00",
-	"10"=>"13:48:00",
-	"11"=>"14:35:00"); #Anything beyond this will be considered after school.
+	"1"=>"8:12:00", #Periods should end at the beginning of the next period.
+	"2"=>"9:04:00", #The end of the period minus the key "passing" is defined
+	"3"=>"10:02:00",#as the passing period.
+	"4a"=>"10:31:00",
+	"4b"=>"10:59:00",
+	"5a"=>"11:27:00",
+	"5b"=>"11:55:00",
+	"6a"=>"12:23:00",
+	"6b"=>"12:51:00",
+	"7"=>"13:43:00",
+	"8"=>"14:35:00"); #Anything beyond this will be considered after school.
 	
 $yhsa = array(
-	"passing"=>"-4 minutes",
+	"passing"=>"-5 minutes",
 	"before"=>"7:25:00",
 	"1"=>"8:12:00",
-	"2"=>"9:03:00",
-	"3"=>"9:54:00",
-	"4"=>"10:28:00",
-	"5"=>"10:56:00",
-	"6"=>"11:24:00",
-	"7"=>"11:52:00",
-	"8"=>"12:20:00",
-	"9"=>"12:48:00",
-	"10"=>"13:39:00",
-	"11"=>"24:30:00");
+	"2"=>"9:04:00",
+	"3"=>"10:02:00",
+	"4a"=>"10:31:00",
+	"4b"=>"10:59:00",
+	"5a"=>"11:27:00",
+	"5b"=>"11:55:00",
+	"6a"=>"12:23:00",
+	"6b"=>"12:51:00",
+	"7"=>"13:43:00",
+	"8"=>"14:35:00");
 	
 $yms = array(
 	"passing"=>"-3 minutes",
@@ -71,68 +71,50 @@ function getPeriodReal($school, $time) { #since PHP has such shitty naming conve
 function getPeriod($time) {
 	if($time < date('H:i:s',strtotime("7:25:00"))) {
 		return "Before school";
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("8:17:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("8:12:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "1";
 		} else {
 			return "1 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("9:09:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("9:04:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "2";
 		} else {
 			return "2 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("10:01:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("10:02:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "3";
 		} else {
 			return "3 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("10:35:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("10:59:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "4";
 		} else {
 			return "4 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:03:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:55:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "5";
 		} else {
 			return "5 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:31:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("12:51:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "6";
 		} else {
 			return "6 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("11:59:00")))) {
+	} else if ($time < ($localPeriod = date('H:i:s',strtotime("13:43:00")))) {
 		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
 			return "7";
 		} else {
 			return "7 (Passing period)";
 		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("12:27:00")))) {
-		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
-			return "8";
-		} else {
-			return "8 (Passing period)";
-		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("12:56:00")))) {
-		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
-			return "9";
-		} else {
-			return "9 (Passing period)";
-		}
-	} else if ($time < ($localPeriod = date('H:i:s',strtotime("13:48:00")))) {
-		if($time < date('H:i:s',strtotime("-5 minutes", strtotime($localPeriod)))) {
-			return "10";
-		} else {
-			return "10 (Passing period)";
-		}
 	} else if ($time < ($localPeriod = date('H:i:s',strtotime("14:35:00")))) {
-		return "11";
+		return "8";
 	} else {
 		return "After school";
 	}
