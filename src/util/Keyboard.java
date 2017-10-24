@@ -26,7 +26,7 @@ public class Keyboard implements KeyListener {
     			que = que.substring(0,que.length() - 1);
     		}
     	} else {
-    		if(que.length() < 7 || e.getKeyChar() == '\n') {
+    		if(que.length() <= 12 || e.getKeyChar() == '\n') {
     			que += e.getKeyChar();
     		}
     	}
@@ -34,7 +34,7 @@ public class Keyboard implements KeyListener {
         if(que.length() > 1 && que.substring(que.length()-1, que.length()).equals("\n")) {
         	que = que.substring(0,que.length() - 1);
         	System.out.print(que);
-        	if(que.length() == 7) {
+        	if(que.length() <= 12) {
         		try {
         			Integer.parseInt(que);
             		System.out.println("... Accepted.");
