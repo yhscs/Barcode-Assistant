@@ -95,7 +95,7 @@ public class Scanner extends JFrame{
 	    
 		title = new JLabel(normalTitle,SwingConstants.CENTER);
 		Font labelFont = title.getFont();
-		title.setFont(new Font(labelFont.getName(), Font.PLAIN, 86));
+		title.setFont(new Font(labelFont.getName(), Font.PLAIN, 64));
 		title.setForeground(Color.RED);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;

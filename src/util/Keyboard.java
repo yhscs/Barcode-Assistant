@@ -36,7 +36,7 @@ public class Keyboard implements KeyListener {
         	System.out.print(que);
         	if(que.length() <= 12) {
         		try {
-        			Integer.parseInt(que);
+        			Long.parseLong(que); // IDs over 10 digits won't fit in an int
             		System.out.println("... Accepted.");
             		try {
 	        			int status = Network.putData(room, roomHash, que);
@@ -62,9 +62,9 @@ public class Keyboard implements KeyListener {
         			scanner.setImage("/pictures/no.png");	
         		}
         	} else {
-        		System.out.println("... Declined. Not 7 characters.");
+        		System.out.println("... Declined. Not 12 characters.");
             	scanner.setHeaderText("Oh no! You tried to break something :(");
-    			scanner.setSubtitleText("The thing you scanned was either too long or too short.");
+    			scanner.setSubtitleText("The thing you scanned was too long.");
     			scanner.setImage("/pictures/no.png");	
         	}
             que = "";
