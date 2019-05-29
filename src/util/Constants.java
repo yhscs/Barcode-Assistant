@@ -13,7 +13,7 @@ public class Constants {
 		throw new InstantiationException();
 	}
 	
-	public static final String DATABASE_PHP_URL="http://attendance.yhscs.us/db.php";
+	public static final String DATABASE_PHP_URL="https://attendance.y115.org/db.php";
 	
 	/**
 	 * Credit http://stackoverflow.com/questions/5513144/converting-char-to-byte

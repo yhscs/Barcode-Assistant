@@ -3,7 +3,7 @@ $('.login').on('submit', function () {
 	var room = document.getElementById("room").value;
 	var password = document.getElementById("password").value;
 	response = $.ajax({
-		url: "http://attendance.yhscs.us/db.php",
+		url: "https://attendance.y115.org/db.php",
 		type:"POST",
 		data: {REQUEST: "SALTY_MC_SALTER", USER: room},
 		async: false
@@ -19,7 +19,7 @@ $('.login').on('submit', function () {
 	
 	var hash = shaObj.getHash("HEX");
 	
-	post("http://attendance.yhscs.us/index.php", {ROOM: room, ROOM_PASSWORD: hash})
+	post("https://attendance.y115.org/index.php", {ROOM: room, ROOM_PASSWORD: hash})
     return false;
 });
 

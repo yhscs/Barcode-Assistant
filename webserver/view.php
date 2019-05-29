@@ -34,6 +34,10 @@ $stmt = $conn->prepare("SELECT * FROM LOG_INSIDE WHERE ROOM = :name"); #Select e
 $stmt->execute(array('name' => $_SESSION['login_user'])); #based on the current selected room.
 $data = $stmt->fetchAll();
 
+#Check if room is a Den room
+if (strtoupper($_SESSION['login_user']) == 'C128' || strtoupper($_SESSION['login_user']) == 'D211' || strtoupper($_SESSION['login_user']) == 'D111' || $_SESSION['login_user'] == '134')
+	$_SESSION['den'] = true;
+
 foreach($data as $row) {		
 	if(($thatMuchTime = strtotime(date("Y-m-d H:i:s")) - strtotime($row["TIME"])) > 4*60*60){ #If the current student has been away for more than 4 hours then we'll consider them gone.
 #		The code here was used to show when a student was signed out automatically. Turned out to be quite spammy. Has been removed.
@@ -339,6 +343,15 @@ $result = $stmt->fetchAll();
 		<th>Student Grade:</th>
 		<th>Time of Action:</th>
 		<th>Period:</th>
+        <?php
+			// Show ACCESS teacher for Den rooms
+			if (isset($_SESSION['den']))
+			{
+				echo '<th>ACCESS Teacher:</th>';
+				$options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');
+				$denDB = new PDO("mysql:host=$servername;dbname=yhscs_den", $username, $password, $options);
+			}
+		?>
 	</tr>
 <?php } else { ?>
 	<tr>
@@ -348,6 +361,15 @@ $result = $stmt->fetchAll();
 		<th>Student Grade:</th>
 		<th>Time of Action:</th>
 		<th>Period:</th>
+        <?php
+			// Show ACCESS teacher for Den rooms
+			if (isset($_SESSION['den']))
+			{
+				echo '<th>ACCESS Teacher:</th>';
+				$options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');
+				$denDB = new PDO("mysql:host=$servername;dbname=yhscs_den", $username, $password, $options);
+			}
+		?>
 	</tr>
 <?php }
 foreach ($result as $row) {	#Yes, this looks funky. But it makes the output look clean and helps debugging.?>
@@ -367,6 +389,33 @@ foreach ($result as $row) {	#Yes, this looks funky. But it makes the output look
 		
 		<?php echo "<td>" . $row["PERIOD"] . "</td>"; ?>
 		
+        <?php #If room is part of the Den, find and output ACCESS teacher
+			if (isset($_SESSION['den']))
+			{
+				if (date('n', strtotime($row["TIME"])) <= 6)
+					$semester = 'S2';
+				else
+					$semester = 'S1';
+				
+				$query = $denDB->prepare("SELECT `Section`.`Staff` FROM `Enrollment`, `Course`, `Section` WHERE `Section`.`Semester` = ? AND `Enrollment`.`StudentEmail` = ? AND `Enrollment`.`Section_Key` = `Section`.`ID` AND `Section`.`Course` = `Course`.`Number` AND `Course`.`Description` LIKE 'ACCESS%' AND (SUBSTRING(`Start`, 1, 1) = ? OR SUBSTRING(`End`, 1, 1) = ?) LIMIT 1");
+				$query->execute(array($semester, $row["STUDENT_ID"].'@y115.org', substr($row["PERIOD"], 0, 1), substr($row["PERIOD"], 0, 1)));
+				$result=$query->fetch();
+				
+				if ($result['Staff'] == 0)
+					$staff = '';
+				else
+				{
+					$query = $denDB->prepare("SELECT `FirstName`, `LastName` FROM `User` WHERE `ID` = ? LIMIT 1");
+					$query->execute(array($result['Staff']));
+					$result=$query->fetch();
+					$staff = $result['FirstName'].' '.$result['LastName'].'<br>';
+				}
+				
+				echo "<td>" . $staff . "</td>";
+				 
+			}
+		?>
+        
 	<?php echo "</tr>"; ?>
 	
 <?php } ?>
